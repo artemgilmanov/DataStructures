@@ -10,9 +10,7 @@ An array is a collection of elements of the same type, stored in contiguous memo
 2. **Homogeneous Data**: All elements are of the same type, occupying equal memory.
 3. **Indexed Access**: Each element can be accessed via its index.
 
-These properties allow constant-time \(O(1)\) access to any element using the formula:
-
-n+k⋅q
+These properties allow constant-time \(O(1)\) access to any element using the formula: n+k⋅q
 
 ## Static Arrays
 
