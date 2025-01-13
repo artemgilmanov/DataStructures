@@ -12,9 +12,7 @@ An array is a collection of elements of the same type, stored in contiguous memo
 
 These properties allow constant-time \(O(1)\) access to any element using the formula:
 
-\[
-\text{Address of element } q = \text{Base Address} + (	ext{Size of element} \times \text{Index})
-\]
+n+k⋅q
 
 ## Static Arrays
 
