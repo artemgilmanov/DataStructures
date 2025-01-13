@@ -1,6 +1,6 @@
 # Static and Dynamic Arrays
 
-Arrays are a fundamental data structure in computer science. They allow for the storage and manipulation of multiple elements under a single variable name. Despite their ubiquity in modern programming languages like C#, Python, and Java, their underlying mechanisms often remain hidden. In this post, we’ll demystify arrays by examining how they work at the memory level and explore their static and dynamic variants.
+Arrays are a fundamental data structure in computer science. They allow for the storage and manipulation of multiple elements under a single variable name. Despite their ubiquity in modern programming languages like C#, Python, and Java, their underlying mechanisms often remain hidden. In this document, arrays are demystified by examining how they work at the memory level and explore their static and dynamic variants.
 
 ## What Is an Array?
 
