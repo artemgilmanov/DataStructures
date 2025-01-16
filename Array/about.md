@@ -870,7 +870,6 @@ for (int i = 4; i >= 2; i--)
 // we can insert it at the required index.
 intArray[2] = 30;
 ```
-
 And here's the result of running printArray.
 
 Index 0 contains 20.
@@ -880,7 +879,372 @@ Index 3 contains 1.
 Index 4 contains 2.
 Index 5 contains 10.
 
-
 Does that all sound good? The main thing to be careful of is remembering that array.length gives you the total capacity of the Array. If you want to know the last used slot, you'll need to keep track of this yourself using a length variable. Other than that, just be careful to read any elements you want to keep, before you overwrite them!
 
-We now have a fun problem for you to test your understanding on. Enjoy!
+Array Deletions
+
+Now that we know how insertion works, it's time to look at its complement—deletion!
+
+Deletion in an Array works in a very similar manner to insertion, and has the same three different cases:
+
+Deleting the last element of the Array.
+Deleting the first element of the Array.
+Deletion at any given index.
+
+Deleting From the End of an Array
+Deletion at the end of an Array is similar to people standing in a line, also known as a queue. The person who most recently joined the queue (at the end) can leave at any time without disturbing the rest of the queue. Deleting from the end of an Array is the least time consuming of the three cases. Recall that insertion at the end of an Array was also the least time-consuming case for insertion.
+
+So, how does this work in code? Before we look at this, let's quickly remind ourselves what the length of an Array means. Here is some code that creates an Array with room for 10 elements, and then adds elements into the first 6 indexes of it.
+
+Here is the equivalent C# code:
+
+```csharp
+// Declare an integer array of 10 elements.
+int[] intArray = new int[10];
+
+// The array currently contains 0 elements
+int length = 0;
+
+// Add elements at the first 6 indexes of the array.
+for (int i = 0; i < 6; i++)
+{
+    intArray[length] = i;
+    length++;
+}
+```
+
+Notice the length variable. Essentially, this variable keeps track of the next index that is free for inserting a new element. This is always the same value as the overall length of the Array. Note that when we declare an Array of a certain size, we simply fix the maximum number of elements it could contain. Initially, the Array doesn't contain anything. Thus, when we add new elements, we also increment the length variable accordingly.
+
+Anyway, here's the code for deleting the last element of an Array.
+
+```csharp
+// Deletion from the end is as simple as reducing the length
+// of the array by 1.
+length--;
+```
+Remember how for insertion we were using this printArray function?
+Here is the equivalent C# code:
+
+```csharp
+for (int i = 0; i < intArray.Length; i++)
+{
+    Console.WriteLine("Index " + i + " contains " + intArray[i]);
+}
+```
+Well, if we run it here, we'll get the following result, regardless of whether we run it before or after removing the last element.
+
+Index 0 contains 0.
+Index 1 contains 1.
+Index 2 contains 2.
+Index 3 contains 3.
+Index 4 contains 4.
+Index 5 contains 5.
+Index 6 contains 0.
+Index 7 contains 0.
+Index 8 contains 0.
+Index 9 contains 0.
+What's gone wrong? Well, remember how there's two different definitions of length? When we use intArray.length, we're looking every valid index of the Array. When in fact, we only want to look at the ones that we've put values into. The fix is easy, we just iterate up to our own length variable instead.
+Here is the equivalent C# code:
+
+```csharp
+for (int i = 0; i < length; i++)
+{
+    Console.WriteLine("Index " + i + " contains " + intArray[i]);
+}
+```
+Run this, and you'll get the following before the deletion:
+
+Index 0 contains 0.
+Index 1 contains 1.
+Index 2 contains 2.
+Index 3 contains 3.
+Index 4 contains 4.
+Index 5 contains 5.
+And the following after:
+
+Index 0 contains 0.
+Index 1 contains 1.
+Index 2 contains 2.
+Index 3 contains 3.
+Index 4 contains 4.
+Yup, that's it! Even though we call it a deletion, it's not like we actually freed up the space for a new element, right? This is because we don't actually need to free up any space. Simply overwriting the value at a certain index deletes the element at that index. Seeing as the length variable in our examples tells us the next index where we can insert a new element, reducing it by one ensures the next new element is written over the deleted one. This also indicates that the Array now contains one less element, which is exactly what we want programmatically.
+
+Deleting From the Start of an Array
+
+Next comes the costliest of all deletion operations for an Array—deleting the first element. If we want to delete the first element of the Array, that will create a vacant spot at the 0th index. To fill that spot, we will shift the element at index 1 one step to the left. Going by the ripple effect, every element all the way to the last one will be shifted one place to the left. This shift of elements takes 
+O
+(
+N
+)
+O(N) time, where 
+N
+N is the number of elements in the Array.
+
+Here is how deleting the first element looks in code.
+
+```csharp
+// Starting at index 1, we shift each element one position to the left.
+for (int i = 1; i < length; i++)
+{
+    // Shift each element one position to the left
+    intArray[i - 1] = intArray[i];
+}
+
+// Reduce the length of the array by 1 to maintain consistency.
+length--;
+```
+Starting from index 1, we'll move every element one position to its left, effectively "deleting" the element at index 0. We also need to reduce length by 1 so that the next new element is inserted in the correct position.
+
+And here's the output we'll get, with our updated printArray function.
+
+Index 0 contains 1.
+Index 1 contains 2.
+Index 2 contains 3.
+Index 3 contains 4.
+
+Deleting From Anywhere in the Array
+For deletion at any given index, the empty space created by the deleted item will need to be filled. Each of the elements to the right of the index we're deleting at will get shifted to the left by one. Deleting the first element of an Array is a special case of deletion at a given index, where the index is 0. This shift of elements takes 
+O
+(
+K
+)
+O(K) time where 
+K
+K is the number of elements to the right of the given index. Since potentially 
+K
+=
+N
+K=N, we say that the time complexity of this operation is also 
+O
+(
+N
+)
+O(N).
+
+Here is the code to delete the element at index 1. To do this, we'll need to move over the elements after it in the Array.
+
+Here is the equivalent C# code:
+
+```csharp
+// Say we want to delete the element at index 1
+for (int i = 2; i < length; i++)
+{
+    // Shift each element one position to the left
+    intArray[i - 1] = intArray[i];
+}
+
+// Reduce the length of the array to maintain consistency
+length--;
+```
+Notice that this works exactly like deleting the first element, except that we don't touch the elements that are at lower indexes than the element we're deleting.
+
+Here is the output from the printArray function.
+
+Index 0 contains 1.
+Index 1 contains 3.
+Index 2 contains 4.
+
+
+Did that all make sense? To help you cement what you've learned, here's a couple of programming problems for you to try. You should try to solve them without making a new Array. Do this by using the deletion techniques we've investigated above.
+
+Search in an Array
+
+Finally, we're going to look at the most important operation of all. More often than not, it comes down to the speed of searching for an element in a data structure that helps programmers make design choices for their codebases.
+
+There's more than one way of searching an Array, but for now, we're going to focus on the simplest way. Searching means to find an occurrence of a particular element in the Array and return its position. We might need to search an Array to find out whether or not an element is present in the Array. We might also want to search an Array that is arranged in a specific fashion to determine which index to insert a new element at.
+
+If we know the index in the Array that may contain the element we're looking for, then the search becomes a constant time operation—we simply go to the given index and check whether or not the element is there.
+
+Linear Search
+If the index is not known, which is the case most of the time, then we can check every element in the Array. We continue checking elements until we find the element we're looking for, or we reach the end of the Array. This technique for finding an element by checking through all elements one by one is known as the linear search algorithm. In the worst case, a linear search ends up checking the entire Array. Therefore, the time complexity for a linear search is 
+O
+(
+N
+)
+O(N).
+
+Let's see the linear search algorithm in action, with all the edge cases handled properly. When we say edge cases, we basically mean scenarios that you wouldn't expect to encounter. For example, the element you're searching for might not even exist in the Array. Or, an even rarer, but possible, scenario is that the input Array doesn't contain any elements at all, or perhaps it is null. It's important to handle all of these edge cases within the code.
+
+Here is the equivalent method in C#:
+
+```csharp
+public static bool LinearSearch(int[] array, int length, int element)
+{
+    // Check for edge cases. Is the array null or empty?
+    // If it is, then we return false because the element we're
+    // searching for couldn't possibly be in it.
+    if (array == null || length == 0)
+    {
+        return false;
+    }
+
+    // Carry out the linear search by checking each element,
+    // starting from the first one.
+    for (int i = 0; i < length; i++)
+    {
+        // We found the element at index i.
+        // So we return true to say it exists.
+        if (array[i] == element)
+        {
+            return true;
+        }
+    }
+
+    // We didn't find the element in the array.
+    return false;
+}
+```
+That's the function we can call to determine whether or not a particular element is in an Array. Notice how we take care of the edge cases before proceeding with the actual search, and that we don't check the rest of the elements once we'd found the element we were looking for.
+
+There are many variations to this algorithm, such as returning the first location, last location, or all the locations (an element could be in the Array more than once). Let's see what happens when we call the linearSearch function.
+Here is the equivalent program in C#:
+
+```csharp
+using System;
+
+public class ArraySearch
+{
+    public static void Main(string[] args)
+    {
+        // Declare a new array of 6 elements
+        int[] array = new int[6];
+
+        // Variable to keep track of the length of the array
+        int length = 0;
+
+        // Iterate through the 6 indexes of the array.
+        for (int i = 0; i < 6; i++)
+        {
+            // Add a new element and increment the length as well
+            array[length++] = i;
+        }
+
+        // Print out the results of searching for 4 and 30
+        Console.WriteLine("Does the array contain the element 4? - " + LinearSearch(array, length, 4));
+        Console.WriteLine("Does the array contain the element 30? - " + LinearSearch(array, length, 30));
+
+        // Output:
+        // Does the array contain the element 4? - True
+        // Does the array contain the element 30? - False
+    }
+
+    public static bool LinearSearch(int[] array, int length, int element)
+    {
+        // Check for edge cases
+        if (array == null || length == 0)
+        {
+            return false;
+        }
+
+        // Check each element starting from the first one
+        for (int i = 0; i < length; i++)
+        {
+            // We found the element at index i, so return true.
+            if (array[i] == element)
+            {
+                return true;
+            }
+        }
+
+        // We didn't find the element in the array.
+        return false;
+    }
+}
+```
+As expected, we're able to find the element 4 in the Array, but not 30.
+
+Binary Search
+This section is optional. It briefly introduces a more advanced searching algorithm that you will learn more about in a later Explore Card.
+
+There is another way of searching an Array. If the elements in the Array are in sorted order, then we can use binary search. Binary search is where we repeatedly look at the middle element in the Array, and determine whether the element we're looking for must be to the left, or to the right. Each time we do this, we're able to halve the number of elements we still need to search, making binary search a lot faster than linear search!
+
+The downside of binary search though is that it only works if the data is sorted. If we only need to perform a single search, then it's faster to just do a linear search, as it takes longer to sort than to linear search. If we're going to be performing a lot of searches, it is often worth sorting the data first so that we can use binary search for the repeated searches.
+
+In-Place Array Operations Introduction
+In programming interviews, the interviewer often expects you to minimise the time and space complexity of your implementation. In-place Array operations help to reduce space complexity, and so are a class of techniques that pretty much everybody encounters regularly in interviews.
+
+So, what are in-place array operations?
+
+The best way of answering this question is to look at an example.
+
+Given an Array of integers, return an Array where every element at an even-indexed position is squared.
+
+Input: array = [9, -2, -9, 11, 56, -12, -3]
+Output: [81, -2, 81, 11, 3136, -12, 9]
+Explanation: The numbers at even indexes (0, 2, 4, 6) have been squared, 
+whereas the numbers at odd indexes (1, 3, 5) have been left the same.
+This problem is hopefully very straightforward. Have a quick think about how you would implement it as an algorithm though, possibly jotting down some code on a piece of paper.
+
+Anyway, there are two ways we could approach it. The first is to create a new Array, of the same size as the original. Then, we should copy the odd-indexed elements and square the even-indexed elements, writing them into the new Array.
+
+Here is the equivalent method in C#:
+
+```csharp
+public int[] SquareEven(int[] array, int length)
+{
+    // Check for edge cases
+    if (array == null)
+    {
+        return null;
+    }
+
+    // Create a resultant array to hold the result
+    int[] result = new int[length];
+
+    // Iterate through the original array
+    for (int i = 0; i < length; i++)
+    {
+        // Get the element from index i of the input array
+        int element = array[i];
+
+        // If the index is an even number, then square the element
+        if (i % 2 == 0)
+        {
+            element *= element;
+        }
+
+        // Write the element into the result array
+        result[i] = element;
+    }
+
+    // Return the result array
+    return result;
+}
+```
+The above approach, although correct, is an inefficient way of solving the problem. This is because it uses 
+O
+(
+length
+)
+O(length) extra space.
+
+Instead, we could iterate over the original input Array itself, overwriting every even-indexed element with its own square. This way, we won't need that extra space. It is this technique of working directly in the input Array, and not creating a new Array, that we call in-place. In-place Array operations are a big deal for programming interviews, where there is a big focus on minimising both time and space complexity of algorithms.
+
+Here's the in-place implementation for our squareEven(...) function.
+
+Here’s the equivalent C# method:
+
+```csharp
+public int[] SquareEven(int[] array, int length)
+{
+    // Check for edge cases
+    if (array == null)
+    {
+        return array;
+    }
+
+    // Iterate through even indices of the original array
+    for (int i = 0; i < length; i += 2)
+    {
+        // Index is even, so square the element and replace the original value
+        array[i] *= array[i];
+    }
+
+    // Return the modified original array
+    return array;
+}
+```
+
+An important difference for in-place vs not in-place is that in-place modifies the input Array. This means that other functions can no longer access the original data, because it has been overwritten. We'll talk more about this in a bit.
+
+A Better Repeated Deletion Algorithm - Intro
