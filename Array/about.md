@@ -698,7 +698,6 @@ Running this code will give the following output:
 The Array has a capacity of 6
 The Array has a length of 3
 
-
 Handling Array Parameters
 Most Array questions on LeetCode have an Array passed in as a parameter, with no "length" or "capacity" parameter. What do we mean by this? Well, let's look at an example. Here is the description for the first problem you'll be asked to solve.
 
@@ -802,7 +801,6 @@ Let's now add a 4th element. We'll add the number 10.
 intArray[length] = 10;
 length++;
 ```
-
 Notice why we also incremented the length? It is significant to increase the length by 1. If skipping this step, next time when we add another element, we'll accidentally overwrite the one we just added!
 
 Running printArray again, we'll get the following:
@@ -815,14 +813,8 @@ Index 4 contains 0.
 Index 5 contains 0.
 
 Inserting at the Start of an Array
-To insert an element at the start of an Array, we'll need to shift all other elements in the Array to the right by one index to create space for the new element. This is a very costly operation, since each of the existing elements has to be shifted one step to the right. The need to shift everything implies that this is not a constant time operation. In fact, the time taken for insertion at the beginning of an Array will be proportional to the length of the Array. In terms of time complexity analysis, this is a linear time complexity: 
-O
-(
-N
-)
-O(N), where 
-N
-N is the length of the Array.
+
+To insert an element at the start of an Array, we'll need to shift all other elements in the Array to the right by one index to create space for the new element. This is a very costly operation, since each of the existing elements has to be shifted one step to the right. The need to shift everything implies that this is not a constant time operation. In fact, the time taken for insertion at the beginning of an Array will be proportional to the length of the Array. In terms of time complexity analysis, this is a linear time complexity: O(N), where N is the length of the Array.
 
 Here's what this looks like in code.
 Here is the equivalent code in C#:
@@ -943,6 +935,7 @@ Index 6 contains 0.
 Index 7 contains 0.
 Index 8 contains 0.
 Index 9 contains 0.
+
 What's gone wrong? Well, remember how there's two different definitions of length? When we use intArray.length, we're looking every valid index of the Array. When in fact, we only want to look at the ones that we've put values into. The fix is easy, we just iterate up to our own length variable instead.
 Here is the equivalent C# code:
 
@@ -967,6 +960,7 @@ Index 1 contains 1.
 Index 2 contains 2.
 Index 3 contains 3.
 Index 4 contains 4.
+
 Yup, that's it! Even though we call it a deletion, it's not like we actually freed up the space for a new element, right? This is because we don't actually need to free up any space. Simply overwriting the value at a certain index deletes the element at that index. Seeing as the length variable in our examples tells us the next index where we can insert a new element, reducing it by one ensures the next new element is written over the deleted one. This also indicates that the Array now contains one less element, which is exactly what we want programmatically.
 
 Deleting From the Start of an Array
@@ -1003,23 +997,7 @@ Index 2 contains 3.
 Index 3 contains 4.
 
 Deleting From Anywhere in the Array
-For deletion at any given index, the empty space created by the deleted item will need to be filled. Each of the elements to the right of the index we're deleting at will get shifted to the left by one. Deleting the first element of an Array is a special case of deletion at a given index, where the index is 0. This shift of elements takes 
-O
-(
-K
-)
-O(K) time where 
-K
-K is the number of elements to the right of the given index. Since potentially 
-K
-=
-N
-K=N, we say that the time complexity of this operation is also 
-O
-(
-N
-)
-O(N).
+For deletion at any given index, the empty space created by the deleted item will need to be filled. Each of the elements to the right of the index we're deleting at will get shifted to the left by one. Deleting the first element of an Array is a special case of deletion at a given index, where the index is 0. This shift of elements takes O(K) time where K is the number of elements to the right of the given index. Since potentially K=N, we say that the time complexity of this operation is also O(N).
 
 Here is the code to delete the element at index 1. To do this, we'll need to move over the elements after it in the Array.
 
@@ -1044,7 +1022,6 @@ Index 0 contains 1.
 Index 1 contains 3.
 Index 2 contains 4.
 
-
 Did that all make sense? To help you cement what you've learned, here's a couple of programming problems for you to try. You should try to solve them without making a new Array. Do this by using the deletion techniques we've investigated above.
 
 Search in an Array
@@ -1056,12 +1033,7 @@ There's more than one way of searching an Array, but for now, we're going to foc
 If we know the index in the Array that may contain the element we're looking for, then the search becomes a constant time operation—we simply go to the given index and check whether or not the element is there.
 
 Linear Search
-If the index is not known, which is the case most of the time, then we can check every element in the Array. We continue checking elements until we find the element we're looking for, or we reach the end of the Array. This technique for finding an element by checking through all elements one by one is known as the linear search algorithm. In the worst case, a linear search ends up checking the entire Array. Therefore, the time complexity for a linear search is 
-O
-(
-N
-)
-O(N).
+If the index is not known, which is the case most of the time, then we can check every element in the Array. We continue checking elements until we find the element we're looking for, or we reach the end of the Array. This technique for finding an element by checking through all elements one by one is known as the linear search algorithm. In the worst case, a linear search ends up checking the entire Array. Therefore, the time complexity for a linear search is O(N).
 
 Let's see the linear search algorithm in action, with all the edge cases handled properly. When we say edge cases, we basically mean scenarios that you wouldn't expect to encounter. For example, the element you're searching for might not even exist in the Array. Or, an even rarer, but possible, scenario is that the input Array doesn't contain any elements at all, or perhaps it is null. It's important to handle all of these edge cases within the code.
 
@@ -1211,12 +1183,7 @@ public int[] SquareEven(int[] array, int length)
     return result;
 }
 ```
-The above approach, although correct, is an inefficient way of solving the problem. This is because it uses 
-O
-(
-length
-)
-O(length) extra space.
+The above approach, although correct, is an inefficient way of solving the problem. This is because it uses O(length) extra space.
 
 Instead, we could iterate over the original input Array itself, overwriting every even-indexed element with its own square. This way, we won't need that extra space. It is this technique of working directly in the input Array, and not creating a new Array, that we call in-place. In-place Array operations are a big deal for programming interviews, where there is a big focus on minimising both time and space complexity of algorithms.
 
@@ -1244,7 +1211,131 @@ public int[] SquareEven(int[] array, int length)
     return array;
 }
 ```
-
 An important difference for in-place vs not in-place is that in-place modifies the input Array. This means that other functions can no longer access the original data, because it has been overwritten. We'll talk more about this in a bit.
 
 A Better Repeated Deletion Algorithm - Intro
+Let's look at one more example. This time, the result Array is smaller than the input Array! How's this going to work? Let's find out! Here's the problem description:
+
+Given a sorted array, remove the duplicates such that each element appears only once.
+
+Input: array = [1, 1, 2]
+Output: [1, 2]
+Input: array = [0, 0, 1, 1, 1, 2, 2, 3, 3, 4]
+Output: [0, 1, 2, 3, 4]
+You've hopefully already done this question, back when we were looking at deleting items from an Array. In that case, your algorithm might have looked something like this.
+
+```csharp
+public class Solution {
+    public int RemoveDuplicates(int[] nums) {
+        // The initial length is simply the capacity.
+        int length = nums.Length;
+
+        // Assume the last element is always unique.
+        // Then for each element, delete it if it is
+        // the same as the one after it.
+        for (int i = length - 2; i >= 0; i--) {
+            if (nums[i] == nums[i + 1]) {
+                // Delete the element at index i.
+                for (int j = i + 1; j < length; j++) {
+                    nums[j - 1] = nums[j];
+                }
+                // Reduce the length by 1.
+                length--;
+            }
+        }
+
+        // Return the new length.
+        return length;
+    }
+}
+```
+This is actually an in-place algorithm, because it doesn't require any extra space—its space complexity is O(1). However, the time complexity's not so flash, at O(N2). This is because of the nested loop.
+
+We want to get the algorithm down to an O(N) time complexity.
+
+If we don't try to do this in-place, then it's straightforward. We could simply iterate through the Array, adding all unique elements to a new Array. Seeing as the input Array is sorted, we can easily identify all unique elements, as they are the first element, and then any element that is different to the one before it.
+
+One potential problem is that we actually don't know how long the result Array needs to be. Remember how that must be decided when the Array is created? The best solution for this problem is to do an initial pass, counting the number of unique elements. Then, we can create the result Array and do a second pass to add the elements into it. Here's the code for this approach.
+
+```csharp
+public int[] CopyWithRemovedDuplicates(int[] nums) {
+    // Check for edge cases.
+    if (nums == null || nums.Length == 0) {
+        return nums;
+    }
+
+    // Count how many unique elements are in the Array.
+    int uniqueNumbers = 0;
+    for (int i = 0; i < nums.Length; i++) {
+        // An element should be counted as unique if it's the first
+        // element in the Array, or is different to the one before it.
+        if (i == 0 || nums[i] != nums[i - 1]) {
+            uniqueNumbers++;
+        }
+    }
+
+    // Create a result Array.
+    int[] result = new int[uniqueNumbers];
+
+    // Write the unique elements into the result Array.
+    int positionInResult = 0;
+    for (int i = 0; i < nums.Length; i++) {
+        // Same condition as in the previous loop. Except this time, we can write
+        // each unique number into the result Array instead of just counting them.
+        if (i == 0 || nums[i] != nums[i - 1]) {
+            result[positionInResult] = nums[i];
+            positionInResult++;
+        }
+    }
+
+    return result;
+}
+```
+Did you notice the fatal flaw with this approach though? It's the wrong return type! We could copy the result array back into the input array... and then return the length... but this is not what the question wants us to do. We want to instead do the deletions with a space complexity of O(1) and a time complexity of O(N).
+
+A Better Repeated Deletion Algorithm - Answer
+
+Anyway, the algorithm with O(N) space is surprisingly similar to the one without. Interestingly, it's simpler though, because it doesn't need to firstly determine the size of the output.
+
+Implementing this requires the use of the two-pointer technique. This is where we iterate over the Array in two different places at the same time.
+
+Read all the elements like we did before, to identify the duplicates. We call this our readPointer.
+Keep track of the next position in the front to write the next unique element we've found. We call this our writePointer.
+
+Here's the equivalent implementation of the given Java method in C#:
+
+```csharp
+public int RemoveDuplicates(int[] nums) {
+    // Check for edge cases.
+    if (nums == null) {
+        return 0;
+    }
+    
+    // Use the two-pointer technique to remove the duplicates in-place.
+    // The first element shouldn't be touched; it's already in its correct place.
+    int writePointer = 1;
+    
+    // Go through each element in the array.
+    for (int readPointer = 1; readPointer < nums.Length; readPointer++) {
+        // If the current element we're reading is *different* from the previous
+        // element...
+        if (nums[readPointer] != nums[readPointer - 1]) {
+            // Copy it into the next position at the front, tracked by writePointer.
+            nums[writePointer] = nums[readPointer];
+            // Increment writePointer, because the next element should be written one space over.
+            writePointer++;
+        }
+    }
+    
+    // This turns out to be the correct length value.
+    return writePointer;
+}
+```
+You're quite possibly surprised that this even works. How are we not overwriting any elements that we haven't yet looked at?! The key thing to notice is that the condition is such that it is impossible for writePointer to ever get ahead of the readPointer. This means that we would never overwrite a value that we haven't yet read
+
+When to Use In-Place Array Operations
+It's important to know when to use in-place Array operations—they might not always be the way to go.
+
+For example, if we'll need the original array values again later, then we shouldn't be overwriting them. In these cases, it's best to create a copy to work with, or to simply not use in-place techniques. It's important to be very careful when working with existing code that somebody else has written. If other code is depending on the original Array to work, then you might completely break the program if you modify that Array!
+
+In-place operations are valuable when appropriate because they reduce the space complexity of an algorithm. Instead of requiring O(N) space, we can reduce it down to O(1).
