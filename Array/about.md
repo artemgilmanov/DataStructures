@@ -516,7 +516,7 @@ public class MainClass
     }
 }
 ```
-Principle
+## Principle
 In some languages, the multidimensional array is actually implemented internally as a one-dimensional array while in some other languages, there is actually no multidimensional array at all.
 
 1. C++ stores the two-dimensional array as a one-dimensional array.
@@ -532,7 +532,8 @@ The picture below shows the actual structure of a two-dimensional array A in Jav
 Dynamic 2D Array
 Similar to the one-dimensional dynamic array, we can also define a dynamic two-dimensional array. Actually, it can be just a nested dynamic array. You can try it out by yourself.
 
-Writing Items into an Array
+## Writing Items into an Array
+
 To put a DVD into the Array, we need to decide which of the 15 places we'd like it to go in. Each of the places is identified using a number in the range of 0 to N - 1. The 1st place is 0, the 2nd place is 1, the 3rd place is 2... all the way up to the 15th place, which is 14. We call these numbers that identify each place indexes.
 
 Let's put the DVD for The Avengers into the eighth place of the Array we created above.
@@ -573,7 +574,8 @@ dvdCollection[3] = starWarsDVD;
 ```
 Because we just put Star Wars into the Array at index 3, The Incredibles is no longer in the Array. It has been overwritten! If we still have the incrediblesDVD variable in scope, then the DVD still exists in the computer's memory. If not though, it's totally gone!
 
-Reading Items from an Array
+## Reading Items from an Array
+
 We can check what's at a particular Array index.
 
 ```csharp
@@ -584,7 +586,8 @@ Console.WriteLine(dvdCollection[3]);
 ```
 Notice that because we haven't yet put anything at index 10, the value it contains is null. In other languages, such as C, the Array slot could contain completely random data. Java always initializes empty Array slots to null if the Array contains objects, or to default values if it contains primitive types. For example, the array int [] would contain the default value of 0 for each element, float[] would contain default values of 0.0, and bool[] would contain default values of false.
 
-Writing Items into an Array with a Loop
+## Writing Items into an Array with a Loop
+
 We commonly use a loop to put lots of values into an Array. To illustrate this, let's go to another example. This time, we're going to create an Array of ints and put the first 10 square numbers into it.
 
 ```csharp
@@ -637,8 +640,8 @@ foreach (int square in squareNumbers)
 ```
 You'll probably agree that this code is a lot simpler to read. We can use it whenever we don't need the index values. For actually writing the squares into the Array, it wouldn't have worked because we needed to work with the actual index numbers. You don't have to use a "for each" loop when you're starting out, but we recommend you become comfortable with it before interviews. Simple, elegant code is good code!
 
-Array Capacity VS Length
-Report Issue
+## Array Capacity VS Length
+
 If somebody asks you how long the DVD Array is, what would your answer be?
 
 There are two different answers you might have given.
@@ -647,7 +650,8 @@ The number of DVDs the box could hold, if it was full, or
 The number of DVDs currently in the box.
 Both answers are correct, and both have very different meanings! It's important to understand the difference between them, and use them correctly. We call the first one the capacity of the Array, and the second one the length of the Array.
 
-Array Capacity
+## Array Capacity
+
 Let's say we've created a new Array like this.
 
 DVD[] array = new DVD[6]
@@ -670,7 +674,8 @@ Running this code will give the following output:
 The Array has a capacity of 6
 Yup, it's a bit confusing that you need to access the capacity of an Array by using .length. Unfortunately, this is just something you'll need to get used to.
 
-Array Length
+## Array Length
+
 The other definition of length is the number of DVDs, or other items, currently in the Array. This is something you'll need to keep track of yourself, and you won't get any errors if you overwrite an existing DVD, or if you leave a gap in the Array.
 
 You might have noticed that we've been using a length variable in our previous examples, to keep track of the next empty index.
@@ -705,8 +710,6 @@ Given a binary array, find the maximum number of consecutive 1s in this array.
 
 And here is the code template you're given.
 
-Here's the equivalent class definition in C# without the implementation:
-
 ```csharp
 public class Solution {
     public int FindMaxConsecutiveOnes(int[] nums) {
@@ -735,7 +738,7 @@ And that is the basics of Arrays that you'll need to get started! In the next ch
 
 Before that though, we have a few introductory Array problems for you to play around with, starting with the one we briefly looked at above. Enjoy!
 
-Basic Array Operations
+# Basic Array Operations
 
 Now that we have a fairly good understanding of what an Array actually is, and how it is stored inside the computer's physical memory, the next important thing to look at is all the operations that Arrays support. An Array is a data structure, which means that it stores data in a specific format and supports certain operations on the data it stores. Consider the DVD inventory management software from the introduction section. Let's look at some operations you might want to perform using this software:
 
@@ -744,7 +747,7 @@ Delete a DVD from the existing collection if it doesn't make sense to keep it in
 Search for a particular DVD in the collection. This is one of the most commonly executed operation on our collection, because our inventory management software would be used hundreds of times a day to look for a particular DVD asked for by the user.
 In this section, we'll be looking at the three basic operations that are supported by almost every data structure; insertion, deletion, and search.
 
-Array Insertions
+# Array Insertions
 
 In the previous chapter, we looked at how to write elements to an Array. There is a lot more to inserting elements though, as we're about to see!
 
@@ -754,7 +757,8 @@ Inserting a new element at the end of the Array.
 Inserting a new element at the beginning of the Array.
 Inserting a new element at any given index inside the Array.
 
-Inserting at the End of an Array
+## Inserting at the End of an Array
+
 At any point in time, we know the index of the last element of the Array, as we've kept track of it in our length variable. All we need to do for inserting an element at the end is to assign the new element to one index past the current last element.
 
 This is pretty much the same as we've already seen. Here's the code to make a new Array that can hold up to 6 items, and then add items into the first 3 indexes.
@@ -812,7 +816,7 @@ Index 3 contains 10.
 Index 4 contains 0.
 Index 5 contains 0.
 
-Inserting at the Start of an Array
+## Inserting at the Start of an Array
 
 To insert an element at the start of an Array, we'll need to shift all other elements in the Array to the right by one index to create space for the new element. This is a very costly operation, since each of the existing elements has to be shifted one step to the right. The need to shift everything implies that this is not a constant time operation. In fact, the time taken for insertion at the beginning of an Array will be proportional to the length of the Array. In terms of time complexity analysis, this is a linear time complexity: O(N), where N is the length of the Array.
 
@@ -842,7 +846,8 @@ Index 3 contains 2.
 Index 4 contains 10.
 Index 5 contains 0.
 
-Inserting Anywhere in the Array
+## Inserting Anywhere in the Array
+
 Similarly, for inserting at any given index, we first need to shift all the elements from that index onwards one position to the right. Once the space is created for the new element, we proceed with the insertion. If you think about it, insertion at the beginning is basically a special case of inserting an element at a given index—in that case, the given index was 0.
 
 Again, this is also a costly operation since we could potentially have to shift almost all the other elements to the right before actually inserting the new element. As you saw above, shifting lots of elements one place to the right adds to the time complexity of the insertion task.
@@ -873,7 +878,7 @@ Index 5 contains 10.
 
 Does that all sound good? The main thing to be careful of is remembering that array.length gives you the total capacity of the Array. If you want to know the last used slot, you'll need to keep track of this yourself using a length variable. Other than that, just be careful to read any elements you want to keep, before you overwrite them!
 
-Array Deletions
+# Array Deletions
 
 Now that we know how insertion works, it's time to look at its complement—deletion!
 
@@ -883,12 +888,11 @@ Deleting the last element of the Array.
 Deleting the first element of the Array.
 Deletion at any given index.
 
-Deleting From the End of an Array
+## Deleting From the End of an Array
+
 Deletion at the end of an Array is similar to people standing in a line, also known as a queue. The person who most recently joined the queue (at the end) can leave at any time without disturbing the rest of the queue. Deleting from the end of an Array is the least time consuming of the three cases. Recall that insertion at the end of an Array was also the least time-consuming case for insertion.
 
 So, how does this work in code? Before we look at this, let's quickly remind ourselves what the length of an Array means. Here is some code that creates an Array with room for 10 elements, and then adds elements into the first 6 indexes of it.
-
-Here is the equivalent C# code:
 
 ```csharp
 // Declare an integer array of 10 elements.
@@ -963,16 +967,9 @@ Index 4 contains 4.
 
 Yup, that's it! Even though we call it a deletion, it's not like we actually freed up the space for a new element, right? This is because we don't actually need to free up any space. Simply overwriting the value at a certain index deletes the element at that index. Seeing as the length variable in our examples tells us the next index where we can insert a new element, reducing it by one ensures the next new element is written over the deleted one. This also indicates that the Array now contains one less element, which is exactly what we want programmatically.
 
-Deleting From the Start of an Array
+## Deleting From the Start of an Array
 
-Next comes the costliest of all deletion operations for an Array—deleting the first element. If we want to delete the first element of the Array, that will create a vacant spot at the 0th index. To fill that spot, we will shift the element at index 1 one step to the left. Going by the ripple effect, every element all the way to the last one will be shifted one place to the left. This shift of elements takes 
-O
-(
-N
-)
-O(N) time, where 
-N
-N is the number of elements in the Array.
+Next comes the costliest of all deletion operations for an Array—deleting the first element. If we want to delete the first element of the Array, that will create a vacant spot at the 0th index. To fill that spot, we will shift the element at index 1 one step to the left. Going by the ripple effect, every element all the way to the last one will be shifted one place to the left. This shift of elements takes O(N) time, where N is the number of elements in the Array.
 
 Here is how deleting the first element looks in code.
 
@@ -996,7 +993,8 @@ Index 1 contains 2.
 Index 2 contains 3.
 Index 3 contains 4.
 
-Deleting From Anywhere in the Array
+## Deleting From Anywhere in the Array
+
 For deletion at any given index, the empty space created by the deleted item will need to be filled. Each of the elements to the right of the index we're deleting at will get shifted to the left by one. Deleting the first element of an Array is a special case of deletion at a given index, where the index is 0. This shift of elements takes O(K) time where K is the number of elements to the right of the given index. Since potentially K=N, we say that the time complexity of this operation is also O(N).
 
 Here is the code to delete the element at index 1. To do this, we'll need to move over the elements after it in the Array.
@@ -1024,7 +1022,7 @@ Index 2 contains 4.
 
 Did that all make sense? To help you cement what you've learned, here's a couple of programming problems for you to try. You should try to solve them without making a new Array. Do this by using the deletion techniques we've investigated above.
 
-Search in an Array
+## Search in an Array
 
 Finally, we're going to look at the most important operation of all. More often than not, it comes down to the speed of searching for an element in a data structure that helps programmers make design choices for their codebases.
 
@@ -1036,8 +1034,6 @@ Linear Search
 If the index is not known, which is the case most of the time, then we can check every element in the Array. We continue checking elements until we find the element we're looking for, or we reach the end of the Array. This technique for finding an element by checking through all elements one by one is known as the linear search algorithm. In the worst case, a linear search ends up checking the entire Array. Therefore, the time complexity for a linear search is O(N).
 
 Let's see the linear search algorithm in action, with all the edge cases handled properly. When we say edge cases, we basically mean scenarios that you wouldn't expect to encounter. For example, the element you're searching for might not even exist in the Array. Or, an even rarer, but possible, scenario is that the input Array doesn't contain any elements at all, or perhaps it is null. It's important to handle all of these edge cases within the code.
-
-Here is the equivalent method in C#:
 
 ```csharp
 public static bool LinearSearch(int[] array, int length, int element)
@@ -1125,7 +1121,7 @@ public class ArraySearch
 ```
 As expected, we're able to find the element 4 in the Array, but not 30.
 
-Binary Search
+## Binary Search
 This section is optional. It briefly introduces a more advanced searching algorithm that you will learn more about in a later Explore Card.
 
 There is another way of searching an Array. If the elements in the Array are in sorted order, then we can use binary search. Binary search is where we repeatedly look at the middle element in the Array, and determine whether the element we're looking for must be to the left, or to the right. Each time we do this, we're able to halve the number of elements we still need to search, making binary search a lot faster than linear search!
@@ -1188,8 +1184,6 @@ The above approach, although correct, is an inefficient way of solving the probl
 Instead, we could iterate over the original input Array itself, overwriting every even-indexed element with its own square. This way, we won't need that extra space. It is this technique of working directly in the input Array, and not creating a new Array, that we call in-place. In-place Array operations are a big deal for programming interviews, where there is a big focus on minimising both time and space complexity of algorithms.
 
 Here's the in-place implementation for our squareEven(...) function.
-
-Here’s the equivalent C# method:
 
 ```csharp
 public int[] SquareEven(int[] array, int length)
@@ -1293,7 +1287,7 @@ public int[] CopyWithRemovedDuplicates(int[] nums) {
 ```
 Did you notice the fatal flaw with this approach though? It's the wrong return type! We could copy the result array back into the input array... and then return the length... but this is not what the question wants us to do. We want to instead do the deletions with a space complexity of O(1) and a time complexity of O(N).
 
-A Better Repeated Deletion Algorithm - Answer
+## A Better Repeated Deletion Algorithm - Answer
 
 Anyway, the algorithm with O(N) space is surprisingly similar to the one without. Interestingly, it's simpler though, because it doesn't need to firstly determine the size of the output.
 
