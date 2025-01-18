@@ -2,16 +2,6 @@
 
 Arrays are a fundamental data structure in computer science. They allow for the storage and manipulation of multiple elements under a single variable name. Despite their ubiquity in modern programming languages like C#, Python, and Java, their underlying mechanisms often remain hidden. In this document, arrays are demystified by examining how they work at the memory level and explore their static and dynamic variants.
 
-## What Is an Array?
-
-An array is a collection of elements of the same type, stored in contiguous memory locations. This guarantees:
-
-1. **Contiguous Memory**: Elements are stored sequentially in memory.
-2. **Homogeneous Data**: All elements are of the same type, occupying equal memory.
-3. **Indexed Access**: Each element can be accessed via its index.
-
-These properties allow constant-time \(O(1)\) access to any element using the formula: n+k⋅q
-
 ## Static Arrays
 
 A **static array** has a fixed size determined at initialization. It cannot grow or shrink during program execution. For example, in C#:
@@ -198,7 +188,6 @@ public class DynamicArray
     }
 }
 ```
-
 ### Key Operations in Dynamic Arrays
 
 1. **Add Element at the End**:
@@ -355,13 +344,19 @@ Static arrays are simple and efficient but lack flexibility. Dynamic arrays, whi
 
 For scenarios where the size is known in advance, static arrays are a better choice. When flexibility is required, dynamic arrays or built-in structures like `List<T>` in C# offer the best of both worlds.
 
-## 2
+## What Is an Array?
 
+An array is a collection of elements of the same type, stored in contiguous memory locations. This guarantees:
+
+1. **Contiguous Memory**: Elements are stored sequentially in memory.
+2. **Homogeneous Data**: All elements are of the same type, occupying equal memory.
+3. **Indexed Access**: Each element can be accessed via its index.
+
+These properties allow constant-time \(O(1)\) access to any element using the formula: n+k⋅q
 An array is a basic data structure to store a collection of elements sequentially. But elements can be accessed randomly since each element in the array can be identified by an array index.
 An array can have one or more dimensions. Here we start with the one-dimensional array, which is also called the linear array. Here is an example:
  
 In the above example, there are 6 elements in array A. That is to say, the length of A is 6. We can use A[0] to represent the first element in the array. Therefore, A[0] = 6. Similarly, A[1] = 3, A[2] = 8 and so on.
-
 
 ```csharp
 using System;
@@ -403,7 +398,6 @@ public class MainClass
     }
 }
 ```
-
 As we mentioned in the previous article, an array has a fixed capacity and we need to specify the size of the array when we initialize it. Sometimes this will be somewhat inconvenient and wasteful.
 
 Therefore, most programming languages offer built-in dynamic array which is still a random access list data structure but with variable size. For example, we have vector in C++ and ArrayList in Java.
