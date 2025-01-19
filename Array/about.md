@@ -310,6 +310,9 @@ public class DynamicArray
 
 ## What Is an Array?
 
+An array is a basic data structure to store a collection of elements sequentially. But elements can be accessed randomly since each element in the array can be identified by an array index.
+An array can have one or more dimensions. 
+
 An array is a collection of elements of the same type, stored in contiguous memory locations. This guarantees:
 
 1. **Contiguous Memory**: Elements are stored sequentially in memory.
@@ -318,8 +321,7 @@ An array is a collection of elements of the same type, stored in contiguous memo
 
 These properties allow constant-time O(1) access to any element.
 
-An array is a basic data structure to store a collection of elements sequentially. But elements can be accessed randomly since each element in the array can be identified by an array index.
-An array can have one or more dimensions. Here we start with the one-dimensional array, which is also called the linear array. Here is an example:
+Here we start with the one-dimensional array, which is also called the linear array. Here is an example:
  
 ```csharp
 using System;
@@ -347,6 +349,7 @@ public class MainClass
         Console.WriteLine();
 
         Console.Write("[Version 2] The contents of a1 are:");
+
         foreach (int item in a1)
         {
             Console.Write(" " + item);
@@ -361,9 +364,7 @@ public class MainClass
     }
 }
 ```
-As we mentioned in the previous article, an array has a fixed capacity and we need to specify the size of the array when we initialize it. Sometimes this will be somewhat inconvenient and wasteful.
-
-Therefore, most programming languages offer built-in dynamic array which is still a random access list data structure but with variable size. For example, we have vector in C++ and ArrayList in Java.
+As it was mentioned before, an array has a fixed capacity and we need to specify the size of the array when we initialize it. Sometimes this will be somewhat inconvenient and wasteful. Therefore, most programming languages offer built-in dynamic array which is still a random access list data structure but with variable size. For example, we have vector in C++ and ArrayList in Java.
 
 ```csharp
 using System;
@@ -425,6 +426,7 @@ public class MainClass
     }
 }
 ```
+
 Similar to a one-dimensional array, a two-dimensional array also consists of a sequence of elements. But the elements can be laid out in a rectangular grid rather than a line.
 
 ```csharp
@@ -473,22 +475,6 @@ public class MainClass
     }
 }
 ```
-
-## Principle
-In some languages, the multidimensional array is actually implemented internally as a one-dimensional array while in some other languages, there is actually no multidimensional array at all.
-
-1. C++ stores the two-dimensional array as a one-dimensional array.
-
-The picture below shows the actual structure of a M * N array A:
-
-So actually A[i][j] equals to A[i * N + j] if we defined A as a one-dimensional array which also contains M * N elements.
-
-2. In Java, the two-dimensional array is actually a one-dimensional array which contains M elements, each of which is an array of N integers.
-
-The picture below shows the actual structure of a two-dimensional array A in Java:
-
-Dynamic 2D Array
-Similar to the one-dimensional dynamic array, we can also define a dynamic two-dimensional array. Actually, it can be just a nested dynamic array.
 
 ## Writing Items into an Array
 
@@ -584,6 +570,7 @@ for (int i = 0; i < 10; i++)
 // 81
 // 100
 ```
+
 One last thing worth knowing now is that there's a more elegant way of printing out the values of an Array—a variant of the for loop, commonly referred to as a "for each" loop.
 
 ```csharp
@@ -604,8 +591,7 @@ If somebody asks you how long the DVD Array is, what would your answer be?
 
 There are two different answers you might have given.
 
-The number of DVDs the box could hold, if it was full, or
-The number of DVDs currently in the box.
+The number of DVDs the box could hold, if it was full, or The number of DVDs currently in the box.
 Both answers are correct, and both have very different meanings! It's important to understand the difference between them, and use them correctly. We call the first one the capacity of the Array, and the second one the length of the Array.
 
 ## Array Capacity
@@ -661,66 +647,15 @@ Running this code will give the following output:
 The Array has a capacity of 6
 The Array has a length of 3
 
-Handling Array Parameters
-Most Array questions on LeetCode have an Array passed in as a parameter, with no "length" or "capacity" parameter. What do we mean by this? Well, let's look at an example. Here is the description for the first problem you'll be asked to solve.
-
-Given a binary array, find the maximum number of consecutive 1s in this array.
-
-And here is the code template you're given.
-
-```csharp
-public class Solution {
-    public int FindMaxConsecutiveOnes(int[] nums) {
-        // Implementation goes here
-        return 0;
-    }
-}
-``` 
-The only parameter is nums; an Array. You couldn't possibly solve this question without knowing how long nums is. Well, luckily it's straightforward. When an Array is given as a parameter, without any additional information, you can safely assume that length == capacity. That is, the Array is the exact right size to hold all of it's data. We can, therefore, use .length.
-
-Be careful though, Array's are 0-indexed. The capacity/ length is a number of items, not a highest index. The highest index is .length - 1. Therefore, to iterate over all items in the Array, we can do the following.
-
-```csharp
-public class Solution {
-    public int FindMaxConsecutiveOnes(int[] nums) {
-        // Hint: Initialize and declare a variable here to 
-        // keep track of how many 1's you've seen in a row.
-        for (int i = 0; i < nums.Length; i++) {
-            // Do something with element nums[i].
-        }
-        return 0; // Replace with actual return value after implementation.
-    }
-}
-``` 
-And that is the basics of Arrays that you'll need to get started! In the next chapter, we'll look at some of the fundamental techniques we use to work with Arrays.
-
-Before that though, we have a few introductory Array problems for you to play around with, starting with the one we briefly looked at above. Enjoy!
-
 # Basic Array Operations
 
-Now that we have a fairly good understanding of what an Array actually is, and how it is stored inside the computer's physical memory, the next important thing to look at is all the operations that Arrays support. An Array is a data structure, which means that it stores data in a specific format and supports certain operations on the data it stores. Consider the DVD inventory management software from the introduction section. Let's look at some operations you might want to perform using this software:
-
-Insert a new DVD into the collection at a specific location.
-Delete a DVD from the existing collection if it doesn't make sense to keep it in the inventory anymore.
-Search for a particular DVD in the collection. This is one of the most commonly executed operation on our collection, because our inventory management software would be used hundreds of times a day to look for a particular DVD asked for by the user.
-In this section, we'll be looking at the three basic operations that are supported by almost every data structure; insertion, deletion, and search.
-
 # Array Insertions
-
-In the previous chapter, we looked at how to write elements to an Array. There is a lot more to inserting elements though, as we're about to see!
-
-Inserting a new element into an Array can take many forms:
-
-Inserting a new element at the end of the Array.
-Inserting a new element at the beginning of the Array.
-Inserting a new element at any given index inside the Array.
 
 ## Inserting at the End of an Array
 
 At any point in time, we know the index of the last element of the Array, as we've kept track of it in our length variable. All we need to do for inserting an element at the end is to assign the new element to one index past the current last element.
 
 This is pretty much the same as we've already seen. Here's the code to make a new Array that can hold up to 6 items, and then add items into the first 3 indexes.
-Here is the equivalent code in C#:
 
 ```csharp
 // Declare an integer array of 6 elements
@@ -735,7 +670,6 @@ for (int i = 0; i < 3; i++)
 }
 ```
 Let's define a function, printArray, to help us visualise what's happening.
-Here is the equivalent code in C#:
 
 ```csharp
 for (int i = 0; i < intArray.Length; i++)
@@ -752,7 +686,7 @@ Index 5 contains 0
 
 If we run our printArray function, we'll get the following output.
 
-Notice how indexes 3, 4, and 5 all contain 0? This is because Java fills unused int Array slots with 0s.
+Notice how indexes 3, 4, and 5 all contain 0? This is because C# fills unused int Array slots with 0s.
 
 Let's now add a 4th element. We'll add the number 10.
 
@@ -779,7 +713,6 @@ Index 5 contains 0.
 To insert an element at the start of an Array, we'll need to shift all other elements in the Array to the right by one index to create space for the new element. This is a very costly operation, since each of the existing elements has to be shifted one step to the right. The need to shift everything implies that this is not a constant time operation. In fact, the time taken for insertion at the beginning of an Array will be proportional to the length of the Array. In terms of time complexity analysis, this is a linear time complexity: O(N), where N is the length of the Array.
 
 Here's what this looks like in code.
-Here is the equivalent code in C#:
 
 ```csharp
 // First, we will have to create space for a new element.
@@ -877,7 +810,6 @@ Anyway, here's the code for deleting the last element of an Array.
 length--;
 ```
 Remember how for insertion we were using this printArray function?
-Here is the equivalent C# code:
 
 ```csharp
 for (int i = 0; i < intArray.Length; i++)
@@ -957,8 +889,6 @@ For deletion at any given index, the empty space created by the deleted item wil
 
 Here is the code to delete the element at index 1. To do this, we'll need to move over the elements after it in the Array.
 
-Here is the equivalent C# code:
-
 ```csharp
 // Say we want to delete the element at index 1
 for (int i = 2; i < length; i++)
@@ -1023,7 +953,6 @@ public static bool LinearSearch(int[] array, int length, int element)
 That's the function we can call to determine whether or not a particular element is in an Array. Notice how we take care of the edge cases before proceeding with the actual search, and that we don't check the rest of the elements once we'd found the element we were looking for.
 
 There are many variations to this algorithm, such as returning the first location, last location, or all the locations (an element could be in the Array more than once). Let's see what happens when we call the linearSearch function.
-Here is the equivalent program in C#:
 
 ```csharp
 using System;
@@ -1080,6 +1009,7 @@ public class ArraySearch
 As expected, we're able to find the element 4 in the Array, but not 30.
 
 ## Binary Search
+
 This section is optional. It briefly introduces a more advanced searching algorithm that you will learn more about in a later Explore Card.
 
 There is another way of searching an Array. If the elements in the Array are in sorted order, then we can use binary search. Binary search is where we repeatedly look at the middle element in the Array, and determine whether the element we're looking for must be to the left, or to the right. Each time we do this, we're able to halve the number of elements we still need to search, making binary search a lot faster than linear search!
@@ -1102,8 +1032,6 @@ whereas the numbers at odd indexes (1, 3, 5) have been left the same.
 This problem is hopefully very straightforward. Have a quick think about how you would implement it as an algorithm though, possibly jotting down some code on a piece of paper.
 
 Anyway, there are two ways we could approach it. The first is to create a new Array, of the same size as the original. Then, we should copy the odd-indexed elements and square the even-indexed elements, writing them into the new Array.
-
-Here is the equivalent method in C#:
 
 ```csharp
 public int[] SquareEven(int[] array, int length)
@@ -1163,6 +1091,7 @@ public int[] SquareEven(int[] array, int length)
     return array;
 }
 ```
+
 An important difference for in-place vs not in-place is that in-place modifies the input Array. This means that other functions can no longer access the original data, because it has been overwritten. We'll talk more about this in a bit.
 
 A Better Repeated Deletion Algorithm - Intro
@@ -1243,6 +1172,7 @@ public int[] CopyWithRemovedDuplicates(int[] nums) {
     return result;
 }
 ```
+
 Did you notice the fatal flaw with this approach though? It's the wrong return type! We could copy the result array back into the input array... and then return the length... but this is not what the question wants us to do. We want to instead do the deletions with a space complexity of O(1) and a time complexity of O(N).
 
 ## A Better Repeated Deletion Algorithm - Answer
@@ -1253,8 +1183,6 @@ Implementing this requires the use of the two-pointer technique. This is where w
 
 Read all the elements like we did before, to identify the duplicates. We call this our readPointer.
 Keep track of the next position in the front to write the next unique element we've found. We call this our writePointer.
-
-Here's the equivalent implementation of the given Java method in C#:
 
 ```csharp
 public int RemoveDuplicates(int[] nums) {
@@ -1318,3 +1246,20 @@ numbers.RemoveAt(0); // Remove the first element
 ```
 
 `List<T>` handles resizing and other operations internally, making it ideal for most scenarios.
+
+## Multidimentional Array
+
+In some languages, the multidimensional array is actually implemented internally as a one-dimensional array while in some other languages, there is actually no multidimensional array at all.
+
+1. C++ stores the two-dimensional array as a one-dimensional array.
+
+The picture below shows the actual structure of a M * N array A:
+
+So actually A[i][j] equals to A[i * N + j] if we defined A as a one-dimensional array which also contains M * N elements.
+
+2. In Java, the two-dimensional array is actually a one-dimensional array which contains M elements, each of which is an array of N integers.
+
+The picture below shows the actual structure of a two-dimensional array A in Java:
+
+Dynamic 2D Array
+Similar to the one-dimensional dynamic array, we can also define a dynamic two-dimensional array. Actually, it can be just a nested dynamic array.
