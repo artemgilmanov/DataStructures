@@ -1,7 +1,5 @@
 # Static and Dynamic Arrays
 
-Arrays are a fundamental data structure in computer science. They allow for the storage and manipulation of multiple elements under a single variable name. Despite their ubiquity in modern programming languages like C#, Python, and Java, their underlying mechanisms often remain hidden. In this document, arrays are demystified by examining how they work at the memory level and explore their static and dynamic variants.
-
 ## Static Arrays
 
 A **static array** has a fixed size determined at initialization. It cannot grow or shrink during program execution. For example, in C#:
@@ -17,7 +15,7 @@ All elements are initialized to their default values:
 ### Characteristics of Static Arrays
 
 - **Fixed Size**: Size is defined at creation and cannot be changed.
-- **Efficient Access**: Accessing any element by index is \(O(1)\).
+- **Efficient Access**: Accessing any element by index is O(1).
 - **Sequential Memory Allocation**: Ensures quick access but may require careful memory management.
 
 ### Operations on Static Arrays
@@ -45,7 +43,6 @@ All elements are initialized to their default values:
        Console.WriteLine(item);
    }
    ```
-
 4. **Check Array Length**:
    ```csharp
    int length = numbers.Length; // Gets the length of the array.
@@ -311,39 +308,6 @@ public class DynamicArray
    }
    ```
 
-### Comparison of Static vs. Dynamic Arrays
-
-| Feature                | Static Array           | Dynamic Array             |
-|------------------------|------------------------|---------------------------|
-| **Size**               | Fixed                 | Flexible                  |
-| **Memory Usage**       | Fixed allocation      | Can grow/shrink           |
-| **Access Time**        | \(O(1)\)             | \(O(1)\)                 |
-| **Resize Overhead**    | N/A                  | Occasional \(O(n)\)       |
-| **Insertion/Deletion** | N/A                  | \(O(n)\)                  |
-
-### Built-in Dynamic Arrays in C#
-
-C# provides a built-in dynamic array implementation: `List<T>`. Here’s how to use it:
-
-```csharp
-using System.Collections.Generic;
-
-List<int> numbers = new List<int>();
-numbers.Add(7);
-numbers.Insert(1, 10); // Insert 10 at index 1
-
-Console.WriteLine(numbers[1]); // Access element at index 1
-numbers.RemoveAt(0); // Remove the first element
-```
-
-`List<T>` handles resizing and other operations internally, making it ideal for most scenarios.
-
-## Conclusion
-
-Static arrays are simple and efficient but lack flexibility. Dynamic arrays, while more versatile, come with additional overhead for resizing. Understanding how these structures work under the hood allows developers to write more efficient and optimized code.
-
-For scenarios where the size is known in advance, static arrays are a better choice. When flexibility is required, dynamic arrays or built-in structures like `List<T>` in C# offer the best of both worlds.
-
 ## What Is an Array?
 
 An array is a collection of elements of the same type, stored in contiguous memory locations. This guarantees:
@@ -352,12 +316,11 @@ An array is a collection of elements of the same type, stored in contiguous memo
 2. **Homogeneous Data**: All elements are of the same type, occupying equal memory.
 3. **Indexed Access**: Each element can be accessed via its index.
 
-These properties allow constant-time \(O(1)\) access to any element using the formula: n+k⋅q
+These properties allow constant-time O(1) access to any element.
+
 An array is a basic data structure to store a collection of elements sequentially. But elements can be accessed randomly since each element in the array can be identified by an array index.
 An array can have one or more dimensions. Here we start with the one-dimensional array, which is also called the linear array. Here is an example:
  
-In the above example, there are 6 elements in array A. That is to say, the length of A is 6. We can use A[0] to represent the first element in the array. Therefore, A[0] = 6. Similarly, A[1] = 3, A[2] = 8 and so on.
-
 ```csharp
 using System;
 
@@ -510,6 +473,7 @@ public class MainClass
     }
 }
 ```
+
 ## Principle
 In some languages, the multidimensional array is actually implemented internally as a one-dimensional array while in some other languages, there is actually no multidimensional array at all.
 
@@ -524,7 +488,7 @@ So actually A[i][j] equals to A[i * N + j] if we defined A as a one-dimensional 
 The picture below shows the actual structure of a two-dimensional array A in Java:
 
 Dynamic 2D Array
-Similar to the one-dimensional dynamic array, we can also define a dynamic two-dimensional array. Actually, it can be just a nested dynamic array. You can try it out by yourself.
+Similar to the one-dimensional dynamic array, we can also define a dynamic two-dimensional array. Actually, it can be just a nested dynamic array.
 
 ## Writing Items into an Array
 
@@ -1327,3 +1291,30 @@ It's important to know when to use in-place Array operations—they might not al
 For example, if we'll need the original array values again later, then we shouldn't be overwriting them. In these cases, it's best to create a copy to work with, or to simply not use in-place techniques. It's important to be very careful when working with existing code that somebody else has written. If other code is depending on the original Array to work, then you might completely break the program if you modify that Array!
 
 In-place operations are valuable when appropriate because they reduce the space complexity of an algorithm. Instead of requiring O(N) space, we can reduce it down to O(1).
+
+### Comparison of Static vs. Dynamic Arrays
+
+| Feature                | Static Array           | Dynamic Array             |
+|------------------------|------------------------|---------------------------|
+| **Size**               | Fixed                 | Flexible                  |
+| **Memory Usage**       | Fixed allocation      | Can grow/shrink           |
+| **Access Time**        | \(O(1)\)             | \(O(1)\)                 |
+| **Resize Overhead**    | N/A                  | Occasional \(O(n)\)       |
+| **Insertion/Deletion** | N/A                  | \(O(n)\)                  |
+
+### Built-in Dynamic Arrays in C#
+
+C# provides a built-in dynamic array implementation: `List<T>`. Here’s how to use it:
+
+```csharp
+using System.Collections.Generic;
+
+List<int> numbers = new List<int>();
+numbers.Add(7);
+numbers.Insert(1, 10); // Insert 10 at index 1
+
+Console.WriteLine(numbers[1]); // Access element at index 1
+numbers.RemoveAt(0); // Remove the first element
+```
+
+`List<T>` handles resizing and other operations internally, making it ideal for most scenarios.
