@@ -76,7 +76,7 @@ internal class Program
       }
     }
 
-      return result;
+      return max;
   }
 
   internal static int[] SquareEven(int[] array)
