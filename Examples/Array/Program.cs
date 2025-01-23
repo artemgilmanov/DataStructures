@@ -1,5 +1,7 @@
 ﻿namespace Array;
 
+using System;
+
 internal class Program
 {
   static void Main(string[] args)
@@ -31,12 +33,50 @@ internal class Program
 
     Console.WriteLine();
 
-    int[] array_2 = RemoveDuplicates([0, 0, 1, 1, 1, 2, 2, 3, 3, 4]);
+    int[] result_2 = RemoveDuplicates([0, 0, 1, 1, 1, 2, 2, 3, 3, 4]);
 
-    foreach (var item in array_2)
+    foreach (var item in result_2)
     {
       Console.Write(item + " ");
     }
+
+    /*
+     * Given a binary array nums, return the maximum number of consecutive 1's in the array.
+     * Input: nums = [1,1,0,1,1,1]
+     * Output: 3
+     * Explanation: The first two digits or the last three digits are consecutive 1s. The maximum number of consecutive 1s is 3.
+     */
+
+    Console.WriteLine();
+
+    int result_3 = FindMaxConsecutiveOnes([1, 0, 1, 1, 0, 1]);
+
+    Console.Write(result_3);
+
+  }
+
+  private static int FindMaxConsecutiveOnes(int[] value)
+  {
+    int max = 0;
+    int result = 0;
+
+    for (int i = 0; i < value.Length; i++)
+    {
+      if (value[i] == 1)
+      {
+        result++;
+        if (result > max)
+        {
+          max = result;
+        }
+      }
+      else
+      {
+        result = 0;
+      }
+    }
+
+      return result;
   }
 
   internal static int[] SquareEven(int[] array)
