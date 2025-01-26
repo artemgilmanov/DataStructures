@@ -53,6 +53,47 @@ internal class Program
 
     Console.Write(result_3);
 
+    /*
+     * Given an array nums of integers, return how many of them contain an even number of digits.
+     * 
+     * Example 1:
+     * Input: nums = [12,345,2,6,7896]
+     * Output: 2
+     * 
+     * Explanation: 
+     * 12 contains 2 digits (even number of digits). 
+     * 345 contains 3 digits (odd number of digits). 
+     * 2 contains 1 digit (odd number of digits). 
+     * 6 contains 1 digit (odd number of digits). 
+     * 7896 contains 4 digits (even number of digits). 
+     * Therefore only 12 and 7896 contain an even number of digits.
+     */
+
+    Console.WriteLine();
+
+    int result_4 = FindNumbersWithEvenNumberOfDigits([12, 345, 2, 6, 7896]);
+
+  }
+
+  private static int FindNumbersWithEvenNumberOfDigits(int[] value)
+  {
+    int count = 0;
+    for (int i = 0; i < value.Length; i++)
+    {
+      int digits = 0;
+      
+      while (value[i] >0)
+      {
+        value[i] /= 10;
+        digits++;
+      }
+
+      if (digits % 2 == 0)
+      {
+        count++;
+      }
+    }
+    return count;
   }
 
   private static int FindMaxConsecutiveOnes(int[] value)
