@@ -14,7 +14,7 @@ Suppose you were given a list of strings [“hello”, “world”, “we”, �
 
 The ordering relation practically is defined as a method of comparison in programming languages. Most programming languages allow you to pass in custom functions for comparison whenever you want to sort a sequence of elements. In Java, for example, these are comparators. In Python, you can pass a comparison function as the key to the sort method.
 
-´´´csharp
+```csharp
 using System;
 using System.Collections.Generic;
 
@@ -34,7 +34,7 @@ public class StringCompare : IComparer<string>
         return s1.Length.CompareTo(s2.Length);
     }
 }
-´´´
+```
 
 An important concept in sorting is inversions. An inversion in a sequence is defined as a pair of elements that are out of order with respect to the ordering relation. To understand this idea better, let's consider our earlier string example, where the ordering relation was defined by the length of the string:
 
