@@ -67,3 +67,32 @@ In terms of simplicity, it is a highly intuitive algorithm and not too difficult
 
 It also is not a stable sorting algorithm. For example consider the collection [4, 2, 3, 4, 1]. After the first round of selection sort, we get the array [1, 2, 3, 4, 4]. This array is sorted, but it does not preserve the ordering of equal elements.
 
+```csharp
+
+using System;
+
+public class Solution
+{
+    public void SelectionSort(int[] arr)
+    {
+        // Mutates arr so that it is sorted via selecting the minimum element and
+        // swapping it with the corresponding index
+        int minIndex;
+        for (int i = 0; i < arr.Length; i++)
+        {
+            minIndex = i;
+            for (int j = i + 1; j < arr.Length; j++)
+            {
+                if (arr[j] < arr[minIndex])
+                {
+                    minIndex = j;
+                }
+            }
+            // Swap current index with minimum element in rest of list
+            int temp = arr[minIndex];
+            arr[minIndex] = arr[i];
+            arr[i] = temp;
+        }
+    }
+}
+```
