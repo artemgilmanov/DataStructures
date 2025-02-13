@@ -182,20 +182,7 @@ public class Solution
 ```
 # Heap Sort
 
-When we discussed selection sort, the basic principle involved finding the minimum element and moving it to the front. We repeated this continuously until we sorted the entire list. But as we saw, selection sort has a running time of 
-O
-(
-n
-2
-)
-O(n 
-2
- ), since for every iteration, we need to find the minimum element in the list which takes 
-O
-(
-n
-)
-O(n) time. We can improve upon this by using a special data structure called a heap.
+When we discussed selection sort, the basic principle involved finding the minimum element and moving it to the front. We repeated this continuously until we sorted the entire list. But as we saw, selection sort has a running time of O(n2), since for every iteration, we need to find the minimum element in the list which takes O(n) time. We can improve upon this by using a special data structure called a heap.
 
 To review the basics of the heap data structure, you can visit the Heap Explore Card. The core concept of the heap sort involves constructing a heap from our input and repeatedly removing the minimum/maximum element to sort the array. A naive approach to heapsort would start with creating a new array and adding elements one by one into the new array. As with previous sorting algorithms, this sorting algorithm can also be performed in place, so no extra memory is used in terms of space complexity.
 
@@ -226,38 +213,9 @@ Sink this node into the heap until it no longer violates the max-heap property. 
 The root element does not violate the max-heap property
 Proceed to step (4)
 Repeat step 1 on the remaining unsorted elements. Continue until all elements are sorted.
-The key aspect that makes heapsort better than selection sort is the running time of the algorithm is now 
-O
-(
-N
-log
-⁡
-N
-)
-O(NlogN). This is a result of the fact that removing the max element from the heap, which is the central operation in the sort is a 
-O
-(
-log
-⁡
-N
-)
-O(logN) operation, which has to be performed in the worst case 
-N
-−
-1
-N−1 times. Note that in-place heapification is an 
-O
-(
-N
-)
-O(N) operation, so it has no impact on the worst-case time complexity of heapsort.
+The key aspect that makes heapsort better than selection sort is the running time of the algorithm is now O(NlogN). This is a result of the fact that removing the max element from the heap, which is the central operation in the sort is a O(logN) operation, which has to be performed in the worst case N−1 times. Note that in-place heapification is an O(N) operation, so it has no impact on the worst-case time complexity of heapsort.
 
-In terms of space complexity, since we are treating the input array as a heap and creating no extra space (all operations are in-place), heapsort is 
-O
-(
-1
-)
-O(1).
+In terms of space complexity, since we are treating the input array as a heap and creating no extra space (all operations are in-place), heapsort is O(1).
 
 Implementation of heapsort
 ```csharp
@@ -308,12 +266,4 @@ public class Solution
 }
 
 ```
-The main advantage of heapsort is it's generally much faster than the other comparison based sorts on sufficiently large inputs as a consequence of the running time. However, there are a few undesirable qualities in the algorithm. For one, it is not a stable sort. It also turns out that in practice, this algorithm performs worse than other 
-O
-(
-N
-log
-⁡
-N
-)
-O(NlogN) sorts as a result of bad cache locality properties. Heapsort swaps elements based on locations in heaps, which can cause many read operations to access indices in a seemingly random order, causing many cache misses, which will result in practical performance hits.
+The main advantage of heapsort is it's generally much faster than the other comparison based sorts on sufficiently large inputs as a consequence of the running time. However, there are a few undesirable qualities in the algorithm. For one, it is not a stable sort. It also turns out that in practice, this algorithm performs worse than other O(NlogN) sorts as a result of bad cache locality properties. Heapsort swaps elements based on locations in heaps, which can cause many read operations to access indices in a seemingly random order, causing many cache misses, which will result in practical performance hits.
