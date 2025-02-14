@@ -267,3 +267,176 @@ public class Solution
 
 ```
 The main advantage of heapsort is it's generally much faster than the other comparison based sorts on sufficiently large inputs as a consequence of the running time. However, there are a few undesirable qualities in the algorithm. For one, it is not a stable sort. It also turns out that in practice, this algorithm performs worse than other O(NlogN) sorts as a result of bad cache locality properties. Heapsort swaps elements based on locations in heaps, which can cause many read operations to access indices in a seemingly random order, causing many cache misses, which will result in practical performance hits.
+
+# Non-Comparison Based Sorts
+
+In the world of non-comparison based sorts, one of the simplest building blocks is counting sort.
+
+Let’s start with a simple example and build up to the full counting sort algorithm. Let’s define an array 
+A
+=
+[
+1
+,
+5
+,
+0
+,
+3
+,
+6
+,
+4
+,
+2
+]
+A=[1,5,0,3,6,4,2]
+
+Could you come up with a clever approach to sort this special array in a single pass?
+
+A special property of this array is that the maximum element is 6, the minimum element is 0, and each value in between shows up exactly once in the array. So, for this specific array, a rather simple algorithm can sort it in one pass:
+
+Initialize an array 
+output
+output of size 7
+For every element 
+A
+[
+i
+]
+A[i]
+output
+[
+A
+[
+i
+]
+]
+=
+A
+[
+i
+]
+output[A[i]]=A[i]
+All we have to do is map each element 
+A
+[
+i
+]
+A[i] to index 
+A
+[
+i
+]
+A[i] in the output array. This algorithm runs in O(N) time and O(N) extra space. It is guaranteed to work for any array with the following properties: 1. Each element in the array 
+A
+A is between 
+0
+0 and 
+N
+−
+1
+N−1 inclusive (
+0
+≤
+A
+[
+i
+]
+≤
+N
+−
+1
+0≤A[i]≤N−1) 2. No element is repeated 3. The array is size N (all elements from 0 to N - 1 show up exactly once)
+
+The above algorithm in a sense is the simplest version of counting sort. Counting sort is all about using a predefined range of “keys” (in the above example, the keys map one-to-one to an index) to construct a sorted input. The above example is the basic idea, but there are some natural extensions to it. 1. Counting sort can handle non-unique keys (input array can have duplicate elements) 2. Counting sort can handle non-consecutive keys (input array can have elements that don’t exist within the predefined range of values) 3. Counting sort can handle non-numerical keys as long as they are constrained within an alphabet of constrained size (e.g characters, objects with a predefined set of values)
+
+Suppose now that the minimum possible value of the array is set to 0 and the maximum possible value in the array is K. The main idea required to handle steps (1) and (2) is to track the frequency of each value in the range 0 to K.
+
+Suppose the input array was 
+A
+=
+[
+5
+,
+4
+,
+5
+,
+5
+,
+1
+,
+1
+,
+3
+]
+A=[5,4,5,5,1,1,3]
+
+As we did earlier, we can initialize a new array 
+counts
+counts of size equal to the 
+max
+⁡
+(
+A
+)
++
+1
+max(A)+1. Then, the core concept involves mapping each index 
+i
+i of the 
+counts
+counts array to the number of occurrences of 
+i
+i in the original array 
+A
+A.
+
+In this example, the 
+counts
+counts array would be 
+[0, 2, 0, 1, 1, 3, 0]
+[0, 2, 0, 1, 1, 3, 0]
+
+From this 
+counts
+counts array, we can determine the starting index for each element in the original array. The starting indices can be found by calculating the cumulative sum of our previous counts array (index 
+i
+i is the sum of all preceding indices). 
+startingIndices
+=
+[
+0
+,
+0
+,
+2
+,
+2
+,
+3
+,
+4
+,
+7
+]
+startingIndices=[0,0,2,2,3,4,7]
+
+An easy interpretation of this array is to take any element in the original input 
+A
+A and find its index in 
+startingIndices
+startingIndices. That index is where the first instance of that element should be placed. Couple of examples below:
+
+The first instance of element 1 should be placed at index 0 (which makes sense because it is the minimum element).
+The first instance of element 5 should be placed at index 4. This must be true since, when sorted, there are three total instances of 5's, so the starting index of the first instance of 5 should be at index 4. On every iteration, we will increment the index as we process elements. So the second and third instances of element 5 will be placed at indices 5 and 6, respectively.
+Below is an animation of counting sort:
+
+In the actual implementation of this algorithm, we will overwrite the original counts array with the 
+startingIndices
+startingIndices array to reduce the amount of additional space used.
+
+With this intuition in hand, below is the algorithm for counting sort on a set of integers from 0 to K (not all values have to be present and some values can be duplicated).
+
+
