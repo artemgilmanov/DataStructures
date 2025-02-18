@@ -439,4 +439,45 @@ startingIndices array to reduce the amount of additional space used.
 
 With this intuition in hand, below is the algorithm for counting sort on a set of integers from 0 to K (not all values have to be present and some values can be duplicated).
 
+```csharp
+using System;
+using System.Linq;
 
+public class Solution
+{
+    public void CountingSort(int[] arr)
+    {
+        // Sorts an array of integers where minimum value is 0 and maximum value is K
+        int K = arr.Max();
+        int[] counts = new int[K + 1];
+        foreach (int elem in arr)
+        {
+            counts[elem] += 1;
+        }
+        
+        // Overwrite counts with the starting index of each element in the final sorted array
+        int startingIndex = 0;
+        for (int i = 0; i < K + 1; i++)
+        {
+            int count = counts[i];
+            counts[i] = startingIndex;
+            startingIndex += count;
+        }
+
+        int[] sortedArray = new int[arr.Length];
+        foreach (int elem in arr)
+        {
+            sortedArray[counts[elem]] = elem;
+            // Increment counts[elem] index by 1 so the next duplicate element
+            // is placed in the appropriate index
+            counts[elem] += 1;
+        }
+
+        // Copy over sorted list into original arr
+        for (int i = 0; i < arr.Length; i++)
+        {
+            arr[i] = sortedArray[i];
+        }
+    }
+}
+```
