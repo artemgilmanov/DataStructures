@@ -481,3 +481,17 @@ public class Solution
     }
 }
 ```
+The time complexity of counting sort is 
+O
+(
+N
++
+K
+)
+O(N+K) where 
+N
+N is the size of the input array and 
+K
+K is the maximum value in the array. Again, a key assumption in the above version of counting sort is that the minimum possible value in the array is 0 (no negative numbers) and the maximum value is some positive integer K. If this is not the case, it's possible to perform a mapping step at the beginning and then remap the values to the original array at the end. For example, an array with values between -5 and 10 can be mapped to values between 0 and 15, perform counting sort, and then remap to the original -5 to 10 range.
+
+Below is a slight modification to counting sort to handle shifting of values when values are between a range of two general integers.
