@@ -495,3 +495,74 @@ K
 K is the maximum value in the array. Again, a key assumption in the above version of counting sort is that the minimum possible value in the array is 0 (no negative numbers) and the maximum value is some positive integer K. If this is not the case, it's possible to perform a mapping step at the beginning and then remap the values to the original array at the end. For example, an array with values between -5 and 10 can be mapped to values between 0 and 15, perform counting sort, and then remap to the original -5 to 10 range.
 
 Below is a slight modification to counting sort to handle shifting of values when values are between a range of two general integers.
+```csharp
+using System;
+using System.Linq;
+
+public class Solution
+{
+    public void CountingSort(int[] arr)
+    {
+        // Sorts an array of integers (handles shifting of integers to range 0 to K)
+        int shift = arr.Min();
+        int K = arr.Max() - shift;
+        int[] counts = new int[K + 1];
+        foreach (int elem in arr)
+        {
+            counts[elem - shift] += 1;
+        }
+        
+        // Overwrite counts with the starting index of each element in the final sorted array
+        int startingIndex = 0;
+        for (int i = 0; i < K + 1; i++)
+        {
+            int count = counts[i];
+            counts[i] = startingIndex;
+            startingIndex += count;
+        }
+
+        int[] sortedArray = new int[arr.Length];
+        foreach (int elem in arr)
+        {
+            sortedArray[counts[elem - shift]] = elem;
+            // Increment counts[elem] index by 1 so the next duplicate element
+            // is placed in the appropriate index
+            counts[elem - shift] += 1;
+        }
+
+        // Copy over sorted list into original arr
+        for (int i = 0; i < arr.Length; i++)
+        {
+            arr[i] = sortedArray[i];
+        }
+    }
+}
+```
+The space complexity of counting sort is also 
+O
+(
+N
++
+K
+)
+O(N+K) since we have to initialize a new array of size 
+N
+N and a counts array of size 
+K
++
+1
+K+1.
+
+Another important constraint is that counting sort is only viable on inputs that have a fixed size (integers in a range, characters, etc.). If the possible set of inputs is an array of strings, counting sort is not a viable option.
+
+Advantages of using counting sort: 1. It is a stable sort. 2. It can be significantly faster than other comparison based sorts on larger collections of integers with a relatively small range of values.
+
+Disadvantages of using counting sort: 1. It requires extra memory, while many comparison sorts can be implemented without requiring any extra memory. 2. When the range of possible values K is large compared to N, counting sort may actually perform worse than a theoretically slower 
+O
+(
+N
+log
+N
+)
+O(NlogN) sort as a result of the extra memory overhead and additional K operations that need to be performed.
+
