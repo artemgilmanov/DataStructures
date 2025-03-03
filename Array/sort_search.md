@@ -270,6 +270,8 @@ The main advantage of heapsort is it's generally much faster than the other comp
 
 # Non-Comparison Based Sorts
 
+## Counting Sort
+
 In the world of non-comparison based sorts, one of the simplest building blocks is counting sort.
 
 Let’s start with a simple example and build up to the full counting sort algorithm. Let’s define an array A=[1,5,0,3,6,4,2]
@@ -403,4 +405,96 @@ Another important constraint is that counting sort is only viable on inputs that
 Advantages of using counting sort: 1. It is a stable sort. 2. It can be significantly faster than other comparison based sorts on larger collections of integers with a relatively small range of values.
 
 Disadvantages of using counting sort: 1. It requires extra memory, while many comparison sorts can be implemented without requiring any extra memory. 2. When the range of possible values K is large compared to N, counting sort may actually perform worse than a theoretically slower O(NlogN) sort as a result of the extra memory overhead and additional K operations that need to be performed.
+
+## Radix Sort
+
+A problem we encounter with counting sort is that it can’t easily handle strings where the alphabet size could be unconstrained. Additionally, when the maximum value of the array is extraordinarily large, counting sort will lose its appeal since the additional memory overhead can cause things to slow down quite a bit.
+
+Radix sort is an extension of counting sort that handles these problems. It works well with collections of strings and collections of integers (especially when the maximum value is large).
+There are a couple of variations of radix sort, but let’s focus on Least Significant Digit (LSD) Radix Sort.
+
+Let’s use the example array 
+A
+=
+[
+256
+,
+336
+,
+736
+,
+443
+,
+831
+,
+907
+]
+A=[256,336,736,443,831,907]
+
+LSD Radix Sort
+The basic principle of LSD radix sort is to start with the rightmost, least significant, digit (in the case of strings, the rightmost character) of each integer and perform a counting sort on just that digit. Since counting sort is a stable sort, it will keep elements in their relative order in the case of ties.
+
+After the first step of sorting we get the following array (focus on the last digit here):
+
+[831, 443, 256, 336, 736, 907]
+
+We repeat the process on the second digit to get the following array:
+
+[907, 831, 336, 736, 443, 256]
+
+And finally, the last step involves the leftmost digit, which then gives us our sorted array:
+
+[256, 336, 443, 736, 831, 907]
+
+In the case where Radix sort has to deal with integers that have a different number of digits, the leftmost digits in smaller numbers will be treated as 0 anyways, so the sorting algorithm will still work. In the case of strings, a common practice is to pad the smaller length strings with special characters that are treated as the minimum values in an alphabet until the smaller length strings match the length of the longest string.
+
+Here is the full LSD radix sort algorithm for integers. 1. Find the number of digits in the maximum integer. Let that be W. 2. For each integer, loop through digits from 1 to W in right to left order (least significant to most significant digit). On each group of digits, perform counting sort.
+
+Below is the implementation of LSD Radix Sort (note that it uses a modified implementation of counting sort):
+
+```csharp
+```
+
+The running time of LSD Radix sort requires a few parameters. Let 
+W
+W be the maximum digit length within the list of integers. Let 
+N
+N be the size of the original input integer array. And lastly, since we are using counting sort, we must also be aware of the alphabet size 
+K
+K. In the case of digits, it’s a constant 10, but when applied to other inputs, this alphabet size may change.
+
+With these parameters defined, the running time of LSD radix sort is 
+O
+(
+W
+(
+N
++
+K
+)
+)
+O(W(N+K)) as a result of at most 
+W
+W calls to counting sort. The amount of extra space needed is the same as counting sort – 
+O
+(
+N
++
+K
+)
+O(N+K).
+
+The advantage of LSD Radix sort is that for a set of integers and strings with a reasonable 
+W
+W and 
+K
+K. It can be extraordinarily fast, sorting in close to linear time (when 
+W
+W is small). It is also a stable sort.
+
+The disadvantages are that LSD radix sort does require some overhead memory, which when 
+N
+N and/or 
+K
+K is large, can cause major performance hits when compared to other sorts. Additionally, it does require looking at all digits due to the fact that more significant digits later down the line have more impact on the final sorted result. Another type of radix sort that’s commonly used that uses similar ideas looks at the most significant digit (MSD) first and is called MSD radix sort. This approach has a better average case and best case performance than LSD radix sort, though the implementation is significantly trickier.
 
