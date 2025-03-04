@@ -438,6 +438,68 @@ Here is the full LSD radix sort algorithm for integers. 1. Find the number of di
 Below is the implementation of LSD Radix Sort (note that it uses a modified implementation of counting sort):
 
 ```csharp
+using System;
+
+public class Solution
+{
+    private const int NUM_DIGITS = 10;
+
+    public void CountingSort(int[] arr, int placeVal)
+    {
+        // Sorts an array of integers where minimum value is 0 and maximum value is NUM_DIGITS
+        int[] counts = new int[NUM_DIGITS];
+
+        foreach (int elem in arr)
+        {
+            int current = elem / placeVal;
+            counts[current % NUM_DIGITS] += 1;
+        }
+
+        // Overwrite counts with the starting index of each digit in our group of digits
+        int startingIndex = 0;
+        for (int i = 0; i < counts.Length; i++)
+        {
+            int count = counts[i];
+            counts[i] = startingIndex;
+            startingIndex += count;
+        }
+
+        int[] sortedArray = new int[arr.Length];
+        foreach (int elem in arr)
+        {
+            int current = elem / placeVal;
+            sortedArray[counts[current % NUM_DIGITS]] = elem;
+            // Increment counts[current % NUM_DIGITS] index by 1 so the
+            // next duplicate digit is placed in the appropriate index
+            counts[current % NUM_DIGITS] += 1;
+        }
+
+        // Copy over sorted list into original arr
+        for (int i = 0; i < arr.Length; i++)
+        {
+            arr[i] = sortedArray[i];
+        }
+    }
+
+    public void RadixSort(int[] arr)
+    {
+        int maxElem = int.MinValue;
+        foreach (int elem in arr)
+        {
+            if (elem > maxElem)
+            {
+                maxElem = elem;
+            }
+        }
+
+        int placeVal = 1;
+        while (maxElem / placeVal > 0)
+        {
+            CountingSort(arr, placeVal);
+            placeVal *= 10;
+        }
+    }
+}
 ```
 
 The running time of LSD Radix sort requires a few parameters. Let W be the maximum digit length within the list of integers. Let N be the size of the original input integer array. And lastly, since we are using counting sort, we must also be aware of the alphabet size K. In the case of digits, it’s a constant 10, but when applied to other inputs, this alphabet size may change.
