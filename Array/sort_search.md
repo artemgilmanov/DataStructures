@@ -414,21 +414,6 @@ Radix sort is an extension of counting sort that handles these problems. It work
 There are a couple of variations of radix sort, but let’s focus on Least Significant Digit (LSD) Radix Sort.
 
 Let’s use the example array 
-A
-=
-[
-256
-,
-336
-,
-736
-,
-443
-,
-831
-,
-907
-]
 A=[256,336,736,443,831,907]
 
 LSD Radix Sort
@@ -455,34 +440,9 @@ Below is the implementation of LSD Radix Sort (note that it uses a modified impl
 ```csharp
 ```
 
-The running time of LSD Radix sort requires a few parameters. Let 
-W
-W be the maximum digit length within the list of integers. Let 
-N
-N be the size of the original input integer array. And lastly, since we are using counting sort, we must also be aware of the alphabet size 
-K
-K. In the case of digits, it’s a constant 10, but when applied to other inputs, this alphabet size may change.
+The running time of LSD Radix sort requires a few parameters. Let W be the maximum digit length within the list of integers. Let N be the size of the original input integer array. And lastly, since we are using counting sort, we must also be aware of the alphabet size K. In the case of digits, it’s a constant 10, but when applied to other inputs, this alphabet size may change.
 
-With these parameters defined, the running time of LSD radix sort is 
-O
-(
-W
-(
-N
-+
-K
-)
-)
-O(W(N+K)) as a result of at most 
-W
-W calls to counting sort. The amount of extra space needed is the same as counting sort – 
-O
-(
-N
-+
-K
-)
-O(N+K).
+With these parameters defined, the running time of LSD radix sort is O(W(N+K)) as a result of at most W calls to counting sort. The amount of extra space needed is the same as counting sort – O(N+K).
 
 The advantage of LSD Radix sort is that for a set of integers and strings with a reasonable 
 W
