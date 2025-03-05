@@ -501,22 +501,11 @@ public class Solution
     }
 }
 ```
-
 The running time of LSD Radix sort requires a few parameters. Let W be the maximum digit length within the list of integers. Let N be the size of the original input integer array. And lastly, since we are using counting sort, we must also be aware of the alphabet size K. In the case of digits, it’s a constant 10, but when applied to other inputs, this alphabet size may change.
 
 With these parameters defined, the running time of LSD radix sort is O(W(N+K)) as a result of at most W calls to counting sort. The amount of extra space needed is the same as counting sort – O(N+K).
 
-The advantage of LSD Radix sort is that for a set of integers and strings with a reasonable 
-W
-W and 
-K
-K. It can be extraordinarily fast, sorting in close to linear time (when 
-W
-W is small). It is also a stable sort.
+The advantage of LSD Radix sort is that for a set of integers and strings with a reasonable W and K. It can be extraordinarily fast, sorting in close to linear time (when W is small). It is also a stable sort.
 
-The disadvantages are that LSD radix sort does require some overhead memory, which when 
-N
-N and/or 
-K
-K is large, can cause major performance hits when compared to other sorts. Additionally, it does require looking at all digits due to the fact that more significant digits later down the line have more impact on the final sorted result. Another type of radix sort that’s commonly used that uses similar ideas looks at the most significant digit (MSD) first and is called MSD radix sort. This approach has a better average case and best case performance than LSD radix sort, though the implementation is significantly trickier.
+The disadvantages are that LSD radix sort does require some overhead memory, which when N and/or K is large, can cause major performance hits when compared to other sorts. Additionally, it does require looking at all digits due to the fact that more significant digits later down the line have more impact on the final sorted result. Another type of radix sort that’s commonly used that uses similar ideas looks at the most significant digit (MSD) first and is called MSD radix sort. This approach has a better average case and best case performance than LSD radix sort, though the implementation is significantly trickier.
 
