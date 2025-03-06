@@ -509,3 +509,170 @@ The advantage of LSD Radix sort is that for a set of integers and strings with a
 
 The disadvantages are that LSD radix sort does require some overhead memory, which when N and/or K is large, can cause major performance hits when compared to other sorts. Additionally, it does require looking at all digits due to the fact that more significant digits later down the line have more impact on the final sorted result. Another type of radix sort that’s commonly used that uses similar ideas looks at the most significant digit (MSD) first and is called MSD radix sort. This approach has a better average case and best case performance than LSD radix sort, though the implementation is significantly trickier.
 
+## Bucket Sort
+Bucket sort is another non-comparison sorting method similar to counting sort and radix sort. The overarching idea in bucket sort is to place every element of the input into a bucket, where each bucket accepts a range of values. Each bucket is then sorted using a traditional sorting algorithm and then the outputs of the buckets are put together to create one sorted list.
+
+Let's consider a simple example using the array 
+A
+=
+[
+22
+,
+50
+,
+32
+,
+28
+,
+41
+,
+12
+]
+A=[22,50,32,28,41,12].
+
+Suppose we used 
+K
+=
+5
+K=5 buckets. Since the max value of the array is 50, what bucket sort will do is place elements in the array into the following 5 buckets:
+[0, 9] -> elements: []
+[10, 19] -> elements: [12]
+[20, 29] -> elements: [22, 28]
+[30, 39] -> elements: [32]
+[40, 50] -> elements: [50, 41]
+
+The next step involves sorting each bucket using a traditional sort such as insertion sort. Finally, bucket sort will go through each of the sorted buckets in proper order and put together the buckets into the final sorted list.
+
+The steps of bucket sort can be broken down into four distinct parts. Given an array 
+A
+A: 1. Create an initial array of 
+k
+k empty buckets. 2. Distribute each element of the array into its respective bucket. A common way to map values to buckets is via the following function: 
+floor
+(
+K
+∗
+A
+[
+i
+]
+/
+max
+⁡
+(
+A
+)
+)
+floor(K∗A[i]/max(A)). 3. Sort each bucket using insertion sort or some other sorting algorithm. 4. Concatenate the sorted buckets in order to create the sorted list.
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+public class Solution
+{
+    public void BucketSort(int[] arr, int K)
+    {
+        List<List<int>> buckets = new List<List<int>>(K);
+        for (int i = 0; i < K; i++)
+        {
+            buckets.Add(new List<int>());
+        }
+
+        int shift = arr.Min();
+        int maxValue = arr.Max() - shift;
+
+        // Place elements into buckets
+        double bucketSize = (double)maxValue / K;
+        if (bucketSize < 1)
+        {
+            bucketSize = 1.0;
+        }
+
+        foreach (int elem in arr)
+        {
+            int index = (int)((elem - shift) / bucketSize);
+            if (index == K)
+            {
+                // Put the max value in the last bucket
+                buckets[K - 1].Add(elem);
+            }
+            else
+            {
+                buckets[index].Add(elem);
+            }
+        }
+
+        // Sort individual buckets
+        foreach (var bucket in buckets)
+        {
+            bucket.Sort();
+        }
+
+        // Convert sorted buckets into final output
+        List<int> sortedList = new List<int>();
+        foreach (var bucket in buckets)
+        {
+            sortedList.AddRange(bucket);
+        }
+
+        // Copy sorted elements back to original array
+        for (int i = 0; i < arr.Length; i++)
+        {
+            arr[i] = sortedList[i];
+        }
+    }
+}
+```
+The worst-case time complexity of bucket sort is 
+O
+(
+N
+2
+)
+O(N 
+2
+ ) if the sorting algorithm used on the bucket is insertion sort, which is the most common use case since the expectation is that buckets will not have too many elements relative to the entire list. In the worst case, all elements are placed in one bucket, causing the running time to reduce to the worst-case complexity of insertion sort (all elements are in reverse order). If the worst-case running time of the intermediate sort used is 
+O
+(
+N
+log
+⁡
+N
+)
+O(NlogN), then the worst-case running time of bucket sort will also be 
+O
+(
+N
+log
+⁡
+N
+)
+O(NlogN)
+
+On average, when the distribution of elements across buckets is reasonably uniform, it can be shown that bucket sort runs on average 
+O
+(
+N
++
+K
+)
+O(N+K) for 
+K
+K buckets.
+
+The space complexity is 
+O
+(
+N
++
+K
+)
+O(N+K) since we have to initialize an array of size 
+K
+K. The total number of elements stored in this additional array is 
+N
+N, since all 
+N
+N elements have to go inside a bucket.
