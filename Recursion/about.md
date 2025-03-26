@@ -39,3 +39,17 @@ private static void Helper(int index, char[] str)
     Console.Write(str[index]);
 }
 ```
+## Recurrence Relation
+
+There are two important things that one needs to figure out before implementing a recursive function:
+
+recurrence relation: the relationship between the result of a problem and the result of its subproblems.
+base case: the case where one can compute the answer directly without any further recursion calls. Sometimes, the base cases are also called bottom cases, since they are often the cases where the problem has been reduced to the minimal scale, i.e. the bottom, if we consider that dividing the problem into subproblems is in a top-down manner.
+Once we figure out the above two elements, to implement a recursive function we simply call the function itself according to the recurrence relation until we reach the base case.
+
+To explain the above points, let's look at a classic problem, Pascal's Triangle:
+
+Pascal's triangle are a series of numbers arranged in the shape of triangle. In Pascal's triangle, the leftmost and the rightmost numbers of each row are always 1. For the rest, each number is the sum of the two numbers directly above it in the previous row.
+
+Here's the illustration of the Pascal's Triangle with 5 rows: Given the above definition, one is asked to generate the Pascal's Triangle up to a certain number of rows.
+
