@@ -102,3 +102,38 @@ f(4,3).
 We will discuss how to avoid these duplicate calculations in the next chapter of this Explore card.
 
 Following this article, you will find exercises for problems related to Pascal's Triangle.
+
+## Duplicate Calculation in Recursion
+
+Recursion is often an intuitive and powerful way to implement an algorithm. However, it might bring some undesired penalty to the performance, e.g. duplicate calculations, if we do not use it wisely. For instance, at the end of the previous chapter, we have encountered the duplicate calculations problem in Pascal's Triangle, where some intermediate results are calculated multiple times.
+
+In this article we will look closer into the duplicate calculations problem that could happen with recursion. We will then propose a common technique called memoization that can be used to avoid this problem.
+
+To demonstrate another problem with duplicate calculations, let's look at an example that most people might be familiar with, the Fibonacci number. If we define the function F(n) to represent the Fibonacci number at the index of n, then you can derive the following recurrence relation:
+
+F(n) = F(n - 1) + F(n - 2)
+with the base cases:
+
+F(0) = 0, F(1) = 1
+Given the definition of a Fibonacci number, one can implement the function as follows:
+
+```cshrp
+public static int Fibonacci(int n)
+{
+    if (n < 2)
+    {
+        return n;
+    }
+    else
+    {
+        return Fibonacci(n - 1) + Fibonacci(n - 2);
+    }
+}
+```
+Now, if you would like to know the number of F(4), you can apply and extend the above formulas as follows:
+
+F(4) = F(3) + F(2) = (F(2) + F(1)) + F(2)
+As you can see, in order to obtain the result for F(4), we would need to calculate the number F(2) twice following the above deduction: the first time in the first extension of F(4) and the second time for the intermediate result F(3).
+
+Here is the tree that shows all the duplicate calculations (grouped by colors) that occur during the calculation of F(4).
+
