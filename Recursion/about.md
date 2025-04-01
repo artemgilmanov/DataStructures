@@ -137,3 +137,47 @@ As you can see, in order to obtain the result for F(4), we would need to calcula
 
 Here is the tree that shows all the duplicate calculations (grouped by colors) that occur during the calculation of F(4).
 
+## Memoization
+
+To eliminate the duplicate calculation in the above case, as many of you would have figured out, one of the ideas would be to store the intermediate results in the cache so that we could reuse them later without re-calculation.
+
+This idea is also known as memoization, which is a technique that is frequently used together with recursion.
+
+Memoization is an optimization technique used primarily to speed up computer programs by storing the results of expensive function calls and returning the cached result when the same inputs occur again. (Source: wikipedia)
+
+Back to our Fibonacci function F(n). We could use a hash table to keep track of the result of each F(n) with n as the key. The hash table serves as a cache that saves us from duplicate calculations. The memoization technique is a good example that demonstrates how one can reduce compute time in exchange for some additional space.
+
+For the sake of comparison, we provide the implementation of Fibonacci number solution with memoization below.
+
+As an exercise, you could try to make memoization more general and non-intrusive, i.e. applying memoization without changing the original function. (Hint: one can refer to a design pattern called decorator).
+
+```cshrp
+using System.Collections.Generic;
+
+public class MainClass
+{
+    private Dictionary<int, int> cache = new Dictionary<int, int>();
+
+    private int Fib(int N)
+    {
+        if (cache.ContainsKey(N))
+        {
+            return cache[N];
+        }
+        
+        int result;
+        if (N < 2)
+        {
+            result = N;
+        }
+        else
+        {
+            result = Fib(N - 1) + Fib(N - 2);
+        }
+        
+        cache[N] = result;
+        return result;
+    }
+}
+```
+
