@@ -396,3 +396,18 @@ When drafting a recursion algorithm, one could start with the most naive strateg
 When stack overflows, tail recursion might come to help. 
 
 There are often several ways to implement an algorithm with recursion. Tail recursion is a specific form of recursion that we could implement. Different from the memoization technique, tail recursion could optimize the space complexity of the algorithm, by eliminating the stack overhead incurred by recursion. More importantly, with tail recursion, one could avoid the problem of stack overflow that comes often with recursion. Another advantage about tail recursion is that often times it is easier to read and understand, compared to non-tail-recursion. Because there is no post-call dependency in tail recursion (i.e. the recursive call is the final action in the function), unlike non-tail-recursion. Therefore, whenever possible, one should strive to apply the tail recursion.
+
+## D&C Introduction
+
+Divide and conquer (D&C) is one of the most important paradigms in algorithm design and is widely used.
+
+A divide-and-conquer algorithm works by recursively breaking the problem down into two or more subproblems of the same or related type, until these subproblems become simple enough to be solved directly [1]. Then one combines the results of subproblems to form the final solution.
+
+As you can see, divide-and-conquer algorithm is naturally implemented in the form of recursion. Another subtle difference that tells a divide-and-conquer algorithm apart from other recursive algorithms is that we break the problem down into two or more subproblems in the divide-and-conquer algorithm, rather than a single smaller subproblem. The latter recursive algorithm sometimes is called decrease and conquer instead, such as Binary Search.
+
+There are in general three steps that one can follow in order to solve the problem in a divide-and-conquer manner.
+
+1. Divide. Divide the problem S into a set of subproblems: {S 1,S 2,...S n} where n≥2, i.e. there are usually more than one subproblem.
+2. Conquer. Solve each subproblem recursively.
+3. Combine. Combine the results of each subproblem.
+
