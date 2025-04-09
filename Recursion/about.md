@@ -411,3 +411,430 @@ There are in general three steps that one can follow in order to solve the probl
 2. Conquer. Solve each subproblem recursively.
 3. Combine. Combine the results of each subproblem.
 
+## Merge Sort
+One of the classic examples of the divide-and-conquer algorithm is the merge sort algorithm [1]. Merge sort is an efficient and general-purpose sorting algorithm. 
+
+ 
+Intuition
+There are two approaches to implement the merge sort algorithm: top down or bottom up. Here, we will explain the top down approach as it can be implemented naturally using recursion.
+
+The merge sort algorithm can be divided into three steps, like all divide-and-conquer algorithms:
+
+Divide the given unsorted list into several sublists.  (Divide)
+ 
+Sort each of the sublists recursively.  (Conquer)
+ 
+Merge the sorted sublists to produce new sorted list.  (Combine)
+ 
+Top-down Approach
+Let us look at a concrete example to see how the top-down merge sort algorithm works. As shown in the figure below, we are given an unordered list with 8 elements. The task is to sort the list in ascending order. 
+
+
+
+Fig.1  Top-down Merge Sort
+
+ 
+
+In the first step, we divide the list into two sublists.  (Divide)
+ 
+Then in the next step, we recursively sort the sublists in the previous step.  (Conquer)
+ 
+Finally we merge the sorted sublists in the above step repeatedly to obtain the final list of sorted elements.  (Combine)
+ 
+
+The recursion in step (2) would reach the base case where the input list is either empty or contains a single element (see the nodes in blue from the above figure).
+
+Now, we have reduced the problem down to a merge problem, which is much simpler to solve. Merging two sorted lists can be done in linear time complexity 
+O
+(
+N
+)
+O(N), where 
+N
+N is the total lengths of the two lists to merge.
+
+We demonstrate an example of the merge process as following:
+
+
+
+Here is a sample implementation of the top-down merge sort algorithm.
+
+```cshrp
+using System;
+
+public class Solution 
+{
+    public int[] MergeSort(int[] input) 
+    {
+        if (input.Length <= 1) 
+        {
+            return input;
+        }
+        int pivot = input.Length / 2;
+        int[] leftList = MergeSort(input[0..pivot]);
+        int[] rightList = MergeSort(input[pivot..]);
+        return Merge(leftList, rightList);
+    }
+    
+    public int[] Merge(int[] leftList, int[] rightList) 
+    {
+        int[] ret = new int[leftList.Length + rightList.Length];
+        int leftCursor = 0, rightCursor = 0, retCursor = 0;
+
+        while (leftCursor < leftList.Length && rightCursor < rightList.Length) 
+        {
+            if (leftList[leftCursor] < rightList[rightCursor]) 
+            {
+                ret[retCursor++] = leftList[leftCursor++];
+            } 
+            else 
+            {
+                ret[retCursor++] = rightList[rightCursor++];
+            }
+        }
+        
+        // Append remaining elements
+        while (leftCursor < leftList.Length) 
+        {
+            ret[retCursor++] = leftList[leftCursor++];
+        }
+        while (rightCursor < rightList.Length) 
+        {
+            ret[retCursor++] = rightList[rightCursor++];
+        }
+        
+        return ret;
+    }
+}
+```
+Bottom-up Approach
+In the bottom up approach, we divide the list into sublists of a single element at the beginning. Each of the sublists is then sorted already. Then from this point on, we merge the sublists two at a time until a single list remains.
+
+We illustrate how the bottom up approach works in the below figure. The bottom up approach can be implemented iteratively. Try to implement it yourself! We have an exercise that you can practice following this article.
+
+ 
+
+
+
+Fig. 2   Bottom-up Merge Sort
+
+ 
+
+ 
+
+Complexity
+The overall time complexity of the merge sort algorithm is 
+O
+(
+N
+log
+⁡
+N
+)
+O(NlogN), where 
+N
+N is the length of the input list. To calculate the complexity, we break it down to the following steps:
+
+We recursively divide the input list into two sublists, until a sublist with single element remains. This dividing step computes the midpoint of each of the sublists, which takes 
+O
+(
+1
+)
+O(1) time. This step is repeated 
+N
+N times until a single element remains, therefore the total time complexity is 
+O
+(
+N
+)
+O(N).
+ 
+Then, we repetitively merge the sublists, until one single list remains. The recursion tree in Fig. 1 or Fig. 2 above is useful for visualizing how the recurrence is iterated. As shown in the recursion tree, there are a total of 
+N
+N elements on each level. Therefore, it takes 
+O
+(
+N
+)
+O(N) time for the merging process to complete on each level. And since there are a total of 
+log
+⁡
+N
+logN levels, the overall complexity of the merge process is 
+O
+(
+N
+log
+⁡
+N
+)
+O(NlogN).
+Taking into account the complexity of the above two parts in the merge sort algorithm, we conclude that the overall time complexity of merge sort is 
+O
+(
+N
+log
+⁡
+N
+)
+O(NlogN).
+
+The space complexity of the merge sort algorithm is 
+O
+(
+N
+)
+O(N), where 
+N
+N is the length of the input list, since we need to keep the sublists as well as the buffer to hold the merge results at each round of merge process.
+
+## D&C Template
+
+In the previous article of merge sort, we have introduced the general steps involved in all the divide-and-conquer algorithms. In this article, we will present you a pseudocode template that could help you to structure your code when implementing the algorithm in the divide-and-conquer paradigm. Furthermore, we will demonstrate with some concrete examples on how to apply the template.
+
+ 
+
+Template
+There are in general three steps that one can follow in order to solve the problem in a divide-and-conquer manner.
+
+1. Divide. Divide the problem 
+S
+S into a set of subproblems: 
+{
+S
+1
+,
+S
+2
+,
+.
+.
+.
+S
+n
+}
+{S 
+1
+​
+ ,S 
+2
+​
+ ,...S 
+n
+​
+ } where 
+n
+≥
+2
+n≥2, i.e. there are usually more than one subproblem.
+
+2. Conquer. Solve each subproblem recursively. 
+
+3. Combine. Combine the results of each subproblem.
+
+We can summarize the above steps in the following pseudocode template.
+```cshrp
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+public class DivideAndConquer
+{
+    public T DivideAndConquer<T>(T problem)
+    {
+        // Base case: if the problem is small enough, solve it directly
+        if (IsSimple(problem))
+        {
+            return SolveDirectly(problem);
+        }
+
+        // (1) Divide the problem into subproblems
+        List<T> subproblems = Divide(problem);
+
+        // (2) Solve subproblems recursively
+        List<T> results = new List<T>();
+        foreach (var subproblem in subproblems)
+        {
+            results.Add(DivideAndConquer(subproblem));
+        }
+
+        // (3) Combine the results
+        return Combine(results);
+    }
+
+    // Example implementation for an array sum problem
+    public int DivideAndConquerSum(int[] array)
+    {
+        if (array.Length <= 1)
+        {
+            return array.Length == 0 ? 0 : array[0];
+        }
+
+        int mid = array.Length / 2;
+        int[] left = array.Take(mid).ToArray();
+        int[] right = array.Skip(mid).ToArray();
+
+        int leftSum = DivideAndConquerSum(left);
+        int rightSum = DivideAndConquerSum(right);
+
+        return leftSum + rightSum;
+    }
+
+    // Helper methods would be implemented based on specific problems
+    private bool IsSimple<T>(T problem)
+    {
+        // Implementation depends on the specific problem
+        throw new NotImplementedException();
+    }
+
+    private T SolveDirectly<T>(T problem)
+    {
+        // Implementation depends on the specific problem
+        throw new NotImplementedException();
+    }
+
+    private List<T> Divide<T>(T problem)
+    {
+        // Implementation depends on the specific problem
+        throw new NotImplementedException();
+    }
+
+    private T Combine<T>(List<T> results)
+    {
+        // Implementation depends on the specific problem
+        throw new NotImplementedException();
+    }
+}
+```
+As one can see from the above template, the essential part of the divide and conquer is to figure out the recurrence relationship between the subproblems and the original problem, which subsequently defines the functions of divide() and combine(). 
+
+In the next sections, we will show you how to apply the above template to implement the algorithms for some concrete examples.
+
+ 
+Validate Binary Search Tree
+Sometimes, tree related problems can be solved using divide-and-conquer algorithms.
+
+For example, look at the following problem statement:
+
+Given a binary tree, validate if the given tree is a binary search tree (BST). The BST must meet all of the following properties:
+
+All values on the left subtree of a node should be less than the value of the node.
+All values on the right subtree of a node should be greater than the value of the node.
+Both the left and right subtrees must also be binary search trees.
+ 
+
+Read point no. 3 above very carefully. The definition of BST is recursive in nature, making this a natural divide and conquer problem.
+
+Below is an example of a BST shown in the following figure.
+
+
+
+Fig 2. Binary Search Tree
+
+1. In the first step, we divide the tree into two subtrees -- its left child and right child.  (Divide)
+
+2. Then in the next step, we recursively validate each subtree is indeed a binary search tree.  (Conquer)
+
+3. Upon the results of the subproblems from Step 2, we return true if and only if both subtrees are both valid BST.  (Combine)
+
+ 
+
+The recursion in Step 2. would reach the base case where the subtree is either empty or contains a single node, which is a valid BST itself.
+
+Notice some important details are still missing from Step 2. above, which are left as an exercise for the reader. For example, how do you verify these two properties which are also required for a BST?
+
+All values on the left subtree of a node should be less than the value of the node.
+All values on the right subtree of a node should be greater than the value of the node.
+ 
+
+Following this article you can try solving this exercise by yourself. We also provide a step-by-step solution if you are still stuck following the exercise.
+
+ 
+
+Search a 2D Matrix II
+Write an efficient algorithm that searches for an integer value in an 
+[
+m
+×
+n
+]
+[m×n] matrix. This matrix has the following properties:
+
+Integers in each row are sorted in ascending from left to right.
+Integers in each column are sorted in ascending from top to bottom.
+ 
+
+There are several ways to solve the above problem. Here we give an overall idea to solve it in the divide-and-conquer manner. 
+
+As one might notice, given the matrix, if we divide it into some sub-matrices by cutting it either by row and/or column, the resulting matrices would still keep the above two properties of the original matrix. Given the above insight, here is how we can apply the template to solve the problem.
+
+1. We divide the matrix into 4 sub-matrices by choosing a pivot point based on a row and a column.  (Divide)
+
+2. Then we recursively look into each sub-matrix to search for the desired target.  (Conquer)
+
+3. If we find the target in either of the sub-matrices, we stop the search and return the result immediately.  (Combine)
+
+ 
+
+The base cases in the above recursion would be either the input matrix is empty or it contains only a single element. As a simple strategy, one can choose the middle point both on the row and column as the pivot points to divide the matrix.
+
+Do we really need to look into each of the divided 4 sub-matrices? Notice that the smallest and the largest element of the input matrix is located in the top left and bottom right corner respectively, which also applies to each of the divided sub-matrices. In fact, we need to only look into 3 of the sub-matrices.
+
+If our target is equal to the pivot, we have found our target and immediately return the result.
+If our target is less than the pivot, we can discard the bottom-right sub-matrix. All elements in that region must be greater or equal than the pivot.
+If our target is greater than the pivot, we can discard the top-left sub-matrix. All elements in that region must be less than or equal than the pivot.
+ 
+
+We have just finished the divide-and-conquer approach, now try to code the solution yourself! As a follow up exercise, can you derive the time complexity? At the end of this chapter, we provide Master Theorem as an alternative way to derive time complexity like this problem.
+
+ 
+
+The above divide-and-conquer algorithm can still be further improved, which we will provide insights below.
+
+As an improvement to the above divide-and-conquer algorithm, we could devise a better strategy by choosing the pivot points wisely.
+
+ 
+
+We illustrate a strategy in the following figure, to reduce the search zones into 2 sub-matrices, instead of 3 sub-matrices.
+
+
+
+Fig 1. Search 2D Matrix II
+
+First, we choose the middle point on the column which divides the matrix into two sub-matrices. We then fix on this middle column to further determine an optimal row to divide the matrix. We scan the elements along the chosen middle column, to locate the boundary where the value of the element just goes beyond the target value, i.e.  
+{
+V
+i
+−
+1
+<
+target
+<
+V
+i
+}
+{V 
+i−1
+​
+ <target<V 
+i
+​
+ }. From this point, we divide the original matrix into 4 sub-matrices. And we just need to zoom into the bottom left and top right sub-matrices to look for the target value, while ignoring the top left and bottom right sub-matrices.
+
+We ignore the top left sub-matrix that ends with the element 
+V
+i
+−
+1
+V 
+i−1
+​
+ , because all the elements within this sub-matrix would be less than the target value. Similarly, we ignore the bottom right sub-matrices that starts with the element 
+V
+i
+V 
+i
+​
+ , because we know that all the elements within this sub-matrix would be greater than the target value.
+
+ ## Quick Sort
