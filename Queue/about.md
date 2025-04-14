@@ -446,3 +446,124 @@ You are absolutely sure there is no cycle, for example, in tree traversal;
 You do want to add the node to the queue multiple times.
 
 ## Last-in-first-out Data Structure
+
+In a LIFO data structure, the newest element added to the queue will be processed first.
+
+Different from the queue, the stack is a LIFO data structure. Typically, the insert operation is called push in a stack. Similar to the queue, a new element is always added at the end of the stack. However, the delete operation, pop, will always remove the last element which is opposite from the queue.
+
+ 
+
+Example - Stack
+1. Push: you can click Push button below to see how a new element 6 is added to the stack.
+
+2. Pop: you can click Pop button below to see which element will be removed when you pop an element from the stack.
+
+    Push                      Pop
+   
+Implementation - Stack
+The implementation of a Stack is easier than a Queue. A dynamic array is sufficient to implement a stack structure. Here we provide a simple implementation for your reference:
+
+```cshrp
+using System;
+using System.Collections.Generic;
+
+public class MyStack
+{
+    private List<int> data; // store elements
+
+    public MyStack()
+    {
+        data = new List<int>();
+    }
+
+    /// <summary>Insert an element into the stack.</summary>
+    public void Push(int x)
+    {
+        data.Add(x);
+    }
+
+    /// <summary>Checks whether the stack is empty or not.</summary>
+    public bool IsEmpty()
+    {
+        return data.Count == 0;
+    }
+
+    /// <summary>Get the top item from the stack.</summary>
+    public int Top()
+    {
+        return data[data.Count - 1];
+    }
+
+    /// <summary>Delete an element from the stack. Returns true if the operation is successful.</summary>
+    public bool Pop()
+    {
+        if (IsEmpty())
+        {
+            return false;
+        }
+        data.RemoveAt(data.Count - 1);
+        return true;
+    }
+}
+
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        MyStack s = new MyStack();
+        s.Push(1);
+        s.Push(2);
+        s.Push(3);
+        
+        for (int i = 0; i < 4; ++i)
+        {
+            if (!s.IsEmpty())
+            {
+                Console.WriteLine(s.Top());
+            }
+            Console.WriteLine(s.Pop());
+        }
+    }
+}
+```
+## Stack - Usage
+Most popular languages provide built-in stack library so you don't have to reinvent the wheel. Besides initialization, we need to know how to use the two most important operations, pop and push. Also, you should be able to get the top element from the stack. Below are some code examples for your reference:
+
+```cshrp
+using System;
+using System.Collections.Generic;
+
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        // 1. Initialize a stack
+        Stack<int> s = new Stack<int>();
+        
+        // 2. Push new elements
+        s.Push(5);
+        s.Push(13);
+        s.Push(8);
+        s.Push(6);
+        
+        // 3. Check if stack is empty
+        if (s.Count == 0)
+        {
+            Console.WriteLine("Stack is empty!");
+            return;
+        }
+        
+        // 4. Pop an element
+        s.Pop();
+        
+        // 5. Get the top element
+        Console.WriteLine($"The top element is: {s.Peek()}");
+        
+        // 6. Get the size of the stack
+        Console.WriteLine($"The size is: {s.Count}");
+    }
+}
+```
+From now on, we are able to use the built-in stack library to solve problems more conveniently. Let's start with an interesting problem (Min Stack) to help you review the useful operations. Then we will take a look at some classic Stack problems. When you want to process the last element first, the stack will be the most appropriate data structure.
+
+##  Stack and DFS
