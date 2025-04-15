@@ -1705,46 +1705,14 @@ d=1>log
 2
 ​
  1, it falls into the case 3 of the Master Theorem. The case where the chosen pivot is the median of the input can be considered as the average case for the quickselect algorithm, which usually selects the pivot by random. Therefore, the expected time complexity of quickselect is 
-O
-(
-n
-d
-)
-=
-O
-(
-n
-)
-O(n 
-d
- )=O(n), by applying the Master Theorem. 
+O(nd)=O(n)O(nd)=O(n), by applying the Master Theorem. 
 
 Other cases, where the sizes of subproblems are different. 
 
 Master Theorem has its limitations though, since it only applies to the cases where the subproblems are of equal size. Now as it might come to your mind, we cannot apply the Master Theorem to the recursion algorithm for our Fibonacci number. As a reminder, here is the recurrence relation for Fibonacci number: 
-F
-(
-n
-)
-=
-F
-(
-n
-−
-1
-)
-+
-F
-(
-n
-−
-2
-)
 F(n)=F(n−1)+F(n−2), where the problem is divided into two subproblems of different size.
 
 In this case, to estimate the time complexity, we can resort to the Akra-Bazzi Theorem, also known as Akra-Bazzi method, which is a generalization of Master Theorem in order to deal with cases where subproblems are of different size. 
-
- 
 
 Further Readings
 - The original paper of Master Theorem, by Bentley, Jon Louis; Haken, Dorothea; Saxe, James B.(September 1980), "A general method for solving divide-and-conquer recurrences"
@@ -1790,8 +1758,6 @@ N
 N queens on the board. 
 
 As a reminder, a queen can attack any piece that is situated at the same row, column or diagonal as the queen. As shown in the board below, if we place a queen at the row 1 and column 1 of the board, we then cross out all the cells that could be attacked by this queen. 
-
-
 
 In order to count the number of possible solutions to place the N queens, we can break it down into the following steps:
 
@@ -1892,7 +1858,6 @@ By filling out those above-mentioned functions, one should be able to implement 
 
 In this article, we will present you a pseudocode template that summarizes some common patterns for the backtracking algorithms. Furthermore, we will demonstrate with some concrete examples on how to apply the template. 
 
- 
 Template
 With the N-queen example as we presented in the previous article, one might have noticed some patterns about the backtracking algorithm. In the following, we present you a pseudocode template, which could help you to clarify the idea and structure the code when implementing the backtracking algorithms.
 
@@ -2069,3 +2034,142 @@ Indeed, we could solve the problem with the paradigm of backtracking. We break d
 Note: one can find the exercises to the above example within this chapter. One can try out the exercises with the above pseudocode template.
 
 ## Unfold Recursion
+In this article, we illustrate how to convert a recursion algorithm to non-recursion one, i.e. unfold the recursion.
+
+Recursion could be an elegant and intuitive solution, when applied properly. Nevertheless, sometimes, one might have to convert a recursive algorithm to iterative one for various reasons.
+
+Risk of Stackoverflow
+
+    The recursion often incurs additional memory consumption on the system stack, which is a limited resource for each program. If not used properly, the recursion algorithm could lead to stackoverflow. One might argue that a specific type of recursion called tail recursion could solve this problem. Unfortunately, not every recursion can be converted to tail recursion, and not every compiler supports the optimization of the tail recursion.
+
+Efficiency
+
+    Along with the additional memory consumption, the recursion could impose at least the additional cost of function calls, and in a worse case duplicate calculation, i.e. one of the caveats of recursion that we discussed previously in the Explore card of Recursion I.  
+
+Complexity
+
+    The nature of recursion is quite close to the mathematics, which is why the recursion appears to be more intuitive and comprehensive for many people. However, when we abuse the recursion, the recursive program could become more difficult to read and understand than the non-recursive one, e.g. nested recursion etc.
+
+The good news is that we can always convert a recursion to iteration. In order to do so, in general, we use a data structure of stack or queue, which replaces the role of the system call stack during the process of recursion. 
+
+In the next section, we will show you some examples on how to convert the recursion to iteration. 
+
+Example
+The problem that we would like to solve here is to determine if two binary trees are the same or not. Here is the description of the problem. 
+
+Given two binary trees, write a function to check if they are the same or not.
+
+Two binary trees are considered the same if they are structurally identical and the nodes have the same value.
+
+First, let us start with a recursive solution. 
+```cshrp
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     public int val;
+ *     public TreeNode left;
+ *     public TreeNode right;
+ *     public TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public bool IsSameTree(TreeNode p, TreeNode q) {
+        // p and q are both null
+        if (p == null && q == null) return true;
+        // one of p and q is null
+        if (p == null || q == null) return false;
+        // values don't match
+        if (p.val != q.val) return false;
+        // recursively check subtrees
+        return IsSameTree(p.right, q.right) && 
+               IsSameTree(p.left, q.left);
+    }
+}
+```
+As one can see, the above recursion approach is rather intuitive, which follows directly the definition of the problem. Given two nodes, first, we check if the values of the nodes are equal. If this is the case, we then recursively check the left and right child nodes of the given input nodes.
+
+For comparison, here are some sample solutions that convert the above recursion approach to iteration. 
+```cshrp
+using System.Collections.Generic;
+
+public class TreeNode {
+    public int val;
+    public TreeNode left;
+    public TreeNode right;
+    public TreeNode(int x) { val = x; }
+}
+
+public class Solution {
+    private bool Check(TreeNode p, TreeNode q) {
+        // Both nodes are null
+        if (p == null && q == null) return true;
+        // One of the nodes is null
+        if (p == null || q == null) return false;
+        // Values don't match
+        if (p.val != q.val) return false;
+        return true;
+    }
+
+    public bool IsSameTree(TreeNode p, TreeNode q) {
+        if (p == null && q == null) return true;
+        if (!Check(p, q)) return false;
+        
+        // Initialize queues for BFS traversal
+        Queue<TreeNode> queueP = new Queue<TreeNode>();
+        Queue<TreeNode> queueQ = new Queue<TreeNode>();
+        queueP.Enqueue(p);
+        queueQ.Enqueue(q);
+
+        while (queueP.Count > 0) {
+            p = queueP.Dequeue();
+            q = queueQ.Dequeue();
+
+            if (!Check(p, q)) return false;
+            
+            if (p != null) {
+                // Check left children
+                if (!Check(p.left, q.left)) return false;
+                if (p.left != null) {
+                    queueP.Enqueue(p.left);
+                    queueQ.Enqueue(q.left);
+                }
+                
+                // Check right children
+                if (!Check(p.right, q.right)) return false;
+                if (p.right != null) {
+                    queueP.Enqueue(p.right);
+                    queueQ.Enqueue(q.right);
+                }
+            }
+        }
+        return true;
+    }
+}
+```
+To convert a recursion approach to an iteration one, we could perform the following two steps:
+
+We use a stack or queue data structure within the function, to replace the role of the system call stack. At each occurrence of recursion, we simply push the parameters as a new element into the data structure that we created, instead of invoking a recursion.
+
+In addition, we create a loop over the data structure that we created before. The chain invocation of recursion would then be replaced with the iteration within the loop.
+ 
+Next
+In the rest of the chapters, one can find some more problems to practice on. One can try to implement both recursion and iteration approaches for each problem.
+
+## Beyond Recursion
+
+In this card, we introduced the paradigms of divide-and-conquer and backtracking, which often implemented in the form of recursion. Each of the paradigms is well suited for certain types of problems. In this article, we give a brief summary of these paradigms and highlight their differences. 
+
+In the rest of the chapter, we list a few more exercises for one to practice these paradigms. If you have any doubt or question, you can always make a post in the Forum that is located at the end of the card. We will try our best to get back to you as soon as possible.
+
+Divide and Conquer
+A divide-and-conquer algorithm works by recursively breaking the problem down into two or more subproblems of the same or related type, until these subproblems become simple enough to be solved directly [1]. Then one combines the results of subproblems to form the final solution.
+ 
+Backtracking
+Backtracking is a general algorithm for finding all (or some) solutions to some computational problems (notably constraint satisfaction problems), which incrementally builds candidates to the solution and abandons a candidate ("backtracks") as soon as it determines that the candidate cannot leads to a valid solution. [2]
+
+Divide and Conquer VS. Backtracking 
+Often the case, the divide-and-conquer problem has a sole solution, while the backtracking problem has unknown number of solutions. For example, when we apply the merge sort algorithm to sort a list, we obtain a single sorted list, while there are many solutions to place the queens for the N-queen problem.
+
+Each step in the divide-and-conquer problem is indispensable to build the final solution, while many steps in backtracking problem might not be useful to build the solution, but serve as attempts to search for the potential solutions. For example, each step in the merge sort algorithm, i.e. divide, conquer and combine, are all indispensable to build the final solution, while there are many trials and errors during the process of building solutions for the N-queen problem.
+
+When building the solution in the divide-and-conquer algorithm, we have a clear and predefined path, though there might be several different manners to build the path. While in the backtracking problems, one does not know in advance the exact path to the solution. For example, in the top-down merge sort algorithm, we first recursively divide the problems into two subproblems and then combine the solutions of these subproblems. The steps are clearly defined and the number of steps is fixed as well. While in the N-queen problem, if we know exactly where to place the queens, it would only take N steps to do so. When applying the backtracking algorithm to the N-queen problem, we try many candidates and many of them do not eventually lead to a solution but abandoned at the end. As a result, we do not know beforehand how many steps exactly it would take to build a valid solution. 
