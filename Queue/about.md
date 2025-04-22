@@ -594,4 +594,191 @@ As a result, the first path you found in DFS is not always the shortest path. Fo
 As shown in the animation above, we first push the root node to the stack; then we try the first neighbor B and push node B to the stack; so on and so forth. When we reach the deepest node E, we need to trace back. And when we trace back, we will pop the deepest node from the stack which is actually the last node pushed to the stack.
 
 The processing order of the nodes is the exact opposite order as how they were added to the stack, which is Last-in-First-out (LIFO). That's why we use a stack in DFS.
+
 ## DFS - Template I
+
+As we mentioned in the chapter's description, in most cases, we can also use DFS when using BFS. But there is an important difference: the traversal order.
+
+Different from BFS, the nodes you visit earlier might not be the nodes which are closer to the root node. As a result, the first path you found in DFS might not be the shortest path.
+
+In this article, we will provide you a recursion template of DFS and show you how the stack helps with this process. And then we provide some exercise after this article for you to practice.
+
+Template - Recursion
+There are two ways to implement DFS. The first one is to do recursion which you might already be familiar with. Here we provide a template as reference:
+```cshrp
+using System;
+using System.Collections.Generic;
+
+public class Node
+{
+    public int Id { get; set; }
+    public List<Node> Neighbors { get; set; } = new List<Node>();
+    
+    public Node(int id)
+    {
+        Id = id;
+    }
+}
+
+public class GraphDFS
+{
+    /// <summary>
+    /// Returns true if there is a path from current node to target node.
+    /// </summary>
+    public bool DFS(Node current, Node target, HashSet<Node> visited)
+    {
+        // Base case: target found
+        if (current == target)
+            return true;
+        
+        // Explore all neighbors
+        foreach (Node neighbor in current.Neighbors)
+        {
+            if (!visited.Contains(neighbor))
+            {
+                visited.Add(neighbor); // Mark as visited
+                if (DFS(neighbor, target, visited))
+                    return true; // Path found through this neighbor
+            }
+        }
+        
+        // No path found
+        return false;
+    }
+
+    // Helper method for easier initial call
+    public bool HasPath(Node start, Node target)
+    {
+        if (start == null || target == null)
+            return false;
+            
+        var visited = new HashSet<Node> { start };
+        return DFS(start, target, visited);
+    }
+}
+
+// Usage Example
+public class Program
+{
+    public static void Main()
+    {
+        // Create nodes
+        Node nodeA = new Node(1);
+        Node nodeB = new Node(2);
+        Node nodeC = new Node(3);
+        Node nodeD = new Node(4);
+        
+        // Build graph connections
+        nodeA.Neighbors.Add(nodeB);
+        nodeB.Neighbors.Add(nodeC);
+        nodeC.Neighbors.Add(nodeA); // Creates a cycle
+        
+        // Check for path
+        GraphDFS dfs = new GraphDFS();
+        bool pathExists = dfs.HasPath(nodeA, nodeD);
+        
+        Console.WriteLine($"Path exists: {pathExists}");
+    }
+}
+```
+It seems like we don't have to use any stacks when we implement DFS recursively. But actually, we are using the implicit stack provided by the system, also known as the Call Stack.
+n Example
+Let's take a look at an example. We want to find a path between node 0 and node 3 in the graph below. We also show you the stack's status during each call.
+
+
+
+In each stack element, there is an integer cur, an integer target, a reference to array visited and a reference to array edges, which are exactly the parameters we have in the DFS function. We only show cur in the stack above.
+
+Each element costs constant space. And the size of the stack is exactly the depth of DFS. So in the worst case, it costs O(h) to maintain the system stack, where h is the maximum depth of DFS. You should never forget to take the system stack into consideration when calculating the space complexity.
+
+In the template above, we stop when we find the first path.
+
+What if you want to find the shortest path?
+
+Hint: Add one more parameter to indicate the shortest path you have already found.
+
+## DFS - Template II
+
+The advantage of the recursion solution is that it is easier to implement. However, there is a huge disadvantage: if the depth of recursion is too high, you will suffer from stack overflow. In that case, you might want to use BFS instead or implement DFS using an explicit stack.
+
+Here we provide a template using an explicit stack:
+```cshrp
+using System;
+using System.Collections.Generic;
+
+public class Node
+{
+    public int Id { get; set; }
+    public List<Node> Neighbors { get; set; } = new List<Node>();
+    
+    public Node(int id)
+    {
+        Id = id;
+    }
+}
+
+public class GraphDFS
+{
+    /// <summary>
+    /// Returns true if there is a path from root node to target node (iterative DFS)
+    /// </summary>
+    public bool DFS(Node root, Node target)
+    {
+        if (root == null || target == null)
+            return false;
+        
+        HashSet<Node> visited = new HashSet<Node>();
+        Stack<Node> stack = new Stack<Node>();
+        
+        visited.Add(root);
+        stack.Push(root);
+        
+        while (stack.Count > 0)
+        {
+            Node current = stack.Pop();
+            
+            // Early return if target found
+            if (current == target)
+                return true;
+            
+            // Push unvisited neighbors to stack
+            foreach (Node neighbor in current.Neighbors)
+            {
+                if (!visited.Contains(neighbor))
+                {
+                    visited.Add(neighbor);
+                    stack.Push(neighbor);
+                }
+            }
+        }
+        
+        return false;
+    }
+}
+
+// Usage Example
+public class Program
+{
+    public static void Main()
+    {
+        // Create nodes
+        Node node1 = new Node(1);
+        Node node2 = new Node(2);
+        Node node3 = new Node(3);
+        Node node4 = new Node(4);
+        
+        // Build graph connections
+        node1.Neighbors.Add(node2);
+        node2.Neighbors.Add(node3);
+        node3.Neighbors.Add(node1); // Creates a cycle
+        node3.Neighbors.Add(node4);
+        
+        // Check for path
+        GraphDFS dfs = new GraphDFS();
+        bool pathExists = dfs.DFS(node1, node4);
+        
+        Console.WriteLine($"Path from node1 to node4 exists: {pathExists}");
+    }
+}
+```
+The logic is exactly the same with the recursion solution. But we use while loop and stack to simulate the system call stack during recursion. Running through several examples manually will definitely help you understand it better.
