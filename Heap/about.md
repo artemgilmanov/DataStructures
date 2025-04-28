@@ -113,3 +113,8 @@ Min Heap: Each node in the Heap has a value no larger than its child nodes. Ther
 
 ##   Heap Insertion
 
+Insertion means adding an element to the Heap. After inserting the element, the properties of the Heap should remain unchanged.
+
+##  Heap Deletion
+
+Deletion means removing the “top” element from the Heap. After deleting the element, the property of Heap should remain unchanged.
