@@ -256,3 +256,220 @@ public class Program
 }
 ```
 ### Max Heap:
+
+```cshrp
+using System;
+using System.Text;
+
+public class MaxHeap 
+{
+    private int[] heap;
+    private int capacity;
+    private int size;
+
+    public MaxHeap(int heapSize) 
+    {
+        capacity = heapSize;
+        heap = new int[heapSize + 1]; // Using 1-based indexing
+        heap[0] = int.MinValue; // Dummy value at index 0
+        size = 0;
+    }
+
+    public void Add(int element) 
+    {
+        if (size >= capacity) 
+        {
+            Console.WriteLine("Added too many elements!");
+            return;
+        }
+
+        size++;
+        heap[size] = element;
+        HeapifyUp(size);
+    }
+
+    private void HeapifyUp(int index) 
+    {
+        while (index > 1 && heap[index] > heap[Parent(index)]) 
+        {
+            Swap(index, Parent(index));
+            index = Parent(index);
+        }
+    }
+
+    public int Peek() 
+    {
+        if (size < 1) 
+        {
+            Console.WriteLine("Heap is empty!");
+            return int.MinValue;
+        }
+        return heap[1];
+    }
+
+    public int Pop() 
+    {
+        if (size < 1) 
+        {
+            Console.WriteLine("Heap is empty!");
+            return int.MinValue;
+        }
+
+        int max = heap[1];
+        heap[1] = heap[size];
+        size--;
+        HeapifyDown(1);
+        return max;
+    }
+
+    private void HeapifyDown(int index) 
+    {
+        int maxIndex = index;
+        int left = LeftChild(index);
+        int right = RightChild(index);
+
+        if (left <= size && heap[left] > heap[maxIndex])
+            maxIndex = left;
+
+        if (right <= size && heap[right] > heap[maxIndex])
+            maxIndex = right;
+
+        if (index != maxIndex) 
+        {
+            Swap(index, maxIndex);
+            HeapifyDown(maxIndex);
+        }
+    }
+
+    private int Parent(int index) => index / 2;
+    private int LeftChild(int index) => index * 2;
+    private int RightChild(int index) => index * 2 + 1;
+
+    private void Swap(int i, int j) 
+    {
+        (heap[i], heap[j]) = (heap[j], heap[i]);
+    }
+
+    public int Size() => size;
+
+    public override string ToString() 
+    {
+        if (size == 0) return "Heap is empty";
+
+        var sb = new StringBuilder("[");
+        for (int i = 1; i <= size; i++) 
+        {
+            sb.Append(heap[i]);
+            if (i < size) sb.Append(", ");
+        }
+        sb.Append("]");
+        return sb.ToString();
+    }
+}
+
+public class Program 
+{
+    public static void Main() 
+    {
+        MaxHeap heap = new MaxHeap(5);
+        heap.Add(1);
+        heap.Add(2);
+        heap.Add(3);
+        Console.WriteLine(heap); // [3, 1, 2]
+        Console.WriteLine(heap.Peek()); // 3
+        Console.WriteLine(heap.Pop()); // 3
+        Console.WriteLine(heap.Pop()); // 2
+        Console.WriteLine(heap.Pop()); // 1
+        Console.WriteLine(heap); // Heap is empty
+        
+        heap.Add(4);
+        heap.Add(5);
+        Console.WriteLine(heap); // [5, 4]
+    }
+}
+```
+## Common applications of Heap
+
+In most programming languages, Heaps are already built-in. Therefore, we usually do not need to implement a Heap from scratch. However, to use Heap adequately, we need to understand how Heap is commonly used.
+
+In this chapter, we will learn how to:
+
+Construct a Max Heap and a Min Heap.
+Insert elements into a Heap.
+Get the top element of a Heap.
+Delete the top element from a Heap.
+Get the length of a Heap.
+Perform time and space complexity analysis for common applications that use a Heap.
+
+## Construct a Heap
+
+Constructing a Heap means initializing an instance of a Heap. All methods of Heap need to be performed on an instance. Therefore, we need to initialize an instance before applying the methods. When creating a Heap, we can simultaneously perform the heapify operation. Heapify means converting a group of data into a Heap.
+
+Time complexity: 
+O
+(
+N
+)
+O(N).
+
+Space complexity: 
+O
+(
+N
+)
+O(N).
+
+```cshrp
+using System;
+using System.Collections.Generic;
+
+// In C#, a Heap is represented by PriorityQueue<TElement, TPriority>
+// Note: Unlike Java, C#'s PriorityQueue is a min-heap by default
+
+public class HeapExamples
+{
+    public static void Main()
+    {
+        // Construct an empty Min Heap (default)
+        var minHeap = new PriorityQueue<int, int>();
+        
+        // Construct an empty Max Heap using custom comparer
+        var maxHeap = new PriorityQueue<int, int>(Comparer<int>.Create((x, y) => y.CompareTo(x)));
+        
+        // Construct a Heap with initial elements ("Heapify")
+        // Note: C#'s PriorityQueue doesn't have built-in heapify from collection
+        // So we need to add elements manually
+        var heapWithValues = new PriorityQueue<int, int>();
+        foreach (int num in new[] { 3, 1, 2 })
+        {
+            heapWithValues.Enqueue(num, num);
+        }
+        
+        // Usage examples
+        Console.WriteLine("Min Heap Examples:");
+        minHeap.Enqueue(3, 3); // Enqueue(element, priority)
+        minHeap.Enqueue(1, 1);
+        minHeap.Enqueue(2, 2);
+        
+        Console.WriteLine(minHeap.Peek()); // 1 (min element)
+        Console.WriteLine(minHeap.Dequeue()); // 1
+        Console.WriteLine(minHeap.Dequeue()); // 2
+        Console.WriteLine(minHeap.Dequeue()); // 3
+        
+        Console.WriteLine("\nMax Heap Examples:");
+        maxHeap.Enqueue(3, 3);
+        maxHeap.Enqueue(1, 1);
+        maxHeap.Enqueue(2, 2);
+        
+        Console.WriteLine(maxHeap.Peek()); // 3 (max element)
+        Console.WriteLine(maxHeap.Dequeue()); // 3
+        Console.WriteLine(maxHeap.Dequeue()); // 2
+        Console.WriteLine(maxHeap.Dequeue()); // 1
+    }
+}
+```
+
+## Python Max Heap
+
+Python's built-in heap module, heapq, differs from the standard implementation of a heap in two ways. Firstly, it uses zero-based indexing, and this means that it stores the root node at index zero instead of the size of the heap. As a result, the relationship between the index of the children and parent nodes is slightly different. Secondly, the built-in heapq module does not offer a direct way to create a max heap. Instead, we must modify the value(s) of each element when inserting it into the heap and when removing it from the heap. In the following video, we will learn more about this process. There are several benefits from implementing a heap in this way (you can read about them in the previous link).
+
