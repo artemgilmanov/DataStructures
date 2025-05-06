@@ -473,3 +473,221 @@ public class HeapExamples
 
 Python's built-in heap module, heapq, differs from the standard implementation of a heap in two ways. Firstly, it uses zero-based indexing, and this means that it stores the root node at index zero instead of the size of the heap. As a result, the relationship between the index of the children and parent nodes is slightly different. Secondly, the built-in heapq module does not offer a direct way to create a max heap. Instead, we must modify the value(s) of each element when inserting it into the heap and when removing it from the heap. In the following video, we will learn more about this process. There are several benefits from implementing a heap in this way (you can read about them in the previous link).
 
+##  Inserting an Element
+
+Insertion means inserting a new element into the Heap. Note that, after the new element is inserted, properties of the Heap are still maintained.
+
+Time complexity: 
+O
+(
+log
+⁡
+N
+)
+O(logN)
+
+Space complexity: 
+O
+(
+1
+)
+O(1)
+
+```cshrp
+// For .NET 6 and later
+using System;
+using System.Collections.Generic;
+
+public class Program
+{
+    public static void Main()
+    {
+        // 1. Min Heap (default PriorityQueue behavior)
+        var minHeap = new PriorityQueue<int, int>();
+        
+        // Insert element to Min Heap
+        minHeap.Enqueue(element: 5, priority: 5); // Both element and priority are the same
+        
+        // 2. Max Heap (using custom comparer)
+        var maxHeap = new PriorityQueue<int, int>(Comparer<int>.Create((x, y) => y.CompareTo(x)));
+        
+        // Insert element to Max Heap
+        maxHeap.Enqueue(element: 5, priority: 5);
+        
+        // 3. Alternative for older .NET versions (using SortedSet for Max Heap)
+        var maxHeapAlt = new SortedSet<int>(Comparer<int>.Create((x, y) => y.CompareTo(x)));
+        maxHeapAlt.Add(5); // Simple insertion
+    }
+}
+```
+
+## Getting the Top Element of the Heap
+
+The top element of a Max heap is the maximum value in the Heap, while the top element of a Min Heap is the smallest value in the Heap. The top element of the Heap is the most important element in the Heap.
+
+Time complexity: 
+O
+(
+1
+)
+O(1).
+
+Space complexity: 
+O
+(
+1
+)
+O(1).
+
+```cshrp
+// For .NET 6 and later
+using System;
+using System.Collections.Generic;
+
+public class Program
+{
+    public static void Main()
+    {
+        // 1. Min Heap (default PriorityQueue)
+        var minHeap = new PriorityQueue<int, int>();
+        minHeap.Enqueue(3, 3);
+        minHeap.Enqueue(1, 1);
+        minHeap.Enqueue(2, 2);
+        
+        // Get top element (smallest) from Min Heap
+        int minTop = minHeap.Peek();
+        Console.WriteLine($"Top of Min Heap: {minTop}"); // Output: 1
+
+        // 2. Max Heap (with custom comparer)
+        var maxHeap = new PriorityQueue<int, int>(Comparer<int>.Create((x, y) => y.CompareTo(x)));
+        maxHeap.Enqueue(3, 3);
+        maxHeap.Enqueue(1, 1);
+        maxHeap.Enqueue(2, 2);
+        
+        // Get top element (largest) from Max Heap
+        int maxTop = maxHeap.Peek();
+        Console.WriteLine($"Top of Max Heap: {maxTop}"); // Output: 3
+    }
+}
+```
+
+## Deleting the top element
+
+Note that, after deleting the top element, the properties of the Heap will still hold. Therefore, the new top element in the Heap will be the maximum (for Max Heap) or minimum (for Min Heap) of the current Heap.
+
+Time complexity: 
+O
+(
+log
+⁡
+N
+)
+O(logN).
+
+Space complexity: 
+O
+(
+1
+)
+O(1).
+
+```cshrp
+// For .NET 6 and later
+using System;
+using System.Collections.Generic;
+
+public class Program
+{
+    public static void Main()
+    {
+        // 1. Min Heap (default PriorityQueue)
+        var minHeap = new PriorityQueue<int, int>();
+        minHeap.Enqueue(3, 3);
+        minHeap.Enqueue(1, 1);
+        minHeap.Enqueue(2, 2);
+        
+        // Delete and return top element (smallest) from Min Heap
+        if (minHeap.TryDequeue(out int minElement, out _))
+        {
+            Console.WriteLine($"Removed from Min Heap: {minElement}"); // Output: 1
+        }
+
+        // 2. Max Heap (with custom comparer)
+        var maxHeap = new PriorityQueue<int, int>(Comparer<int>.Create((x, y) => y.CompareTo(x)));
+        maxHeap.Enqueue(3, 3);
+        maxHeap.Enqueue(1, 1);
+        maxHeap.Enqueue(2, 2);
+        
+        // Delete and return top element (largest) from Max Heap
+        if (maxHeap.TryDequeue(out int maxElement, out _))
+        {
+            Console.WriteLine($"Removed from Max Heap: {maxElement}"); // Output: 3
+        }
+    }
+}
+```
+
+## Getting the Length of a Heap
+
+The length of the Heap can be used to determine the size of the current heap, and it can also be used to determine if the current Heap is empty. If there are no elements in the current Heap, the length of the Heap is zero.
+
+Time complexity: 
+O
+(
+1
+)
+O(1)
+
+Space complexity: 
+O
+(
+1
+)
+O(1)
+
+```cshrp
+using System;
+using System.Collections.Generic;
+
+public class Program
+{
+    public static void Main()
+    {
+        // 1. Min Heap
+        var minHeap = new PriorityQueue<int, int>();
+        minHeap.Enqueue(3, 3);
+        minHeap.Enqueue(1, 1);
+        
+        // Get length (size) of Min Heap
+        int minHeapSize = minHeap.Count;
+        Console.WriteLine($"Min Heap size: {minHeapSize}"); // Output: 2
+        
+        // Check if Min Heap is empty
+        bool isMinHeapEmpty = minHeap.Count == 0;
+        Console.WriteLine($"Min Heap empty? {isMinHeapEmpty}"); // Output: False
+
+        // 2. Max Heap
+        var maxHeap = new PriorityQueue<int, int>(Comparer<int>.Create((x, y) => y.CompareTo(x)));
+        
+        // Get length (size) of Max Heap
+        int maxHeapSize = maxHeap.Count;
+        Console.WriteLine($"Max Heap size: {maxHeapSize}"); // Output: 0
+        
+        // Check if Max Heap is empty
+        bool isMaxHeapEmpty = maxHeap.Count == 0;
+        Console.WriteLine($"Max Heap empty? {isMaxHeapEmpty}"); // Output: True
+    }
+}
+```
+
+## Space and Time Complexity
+
+| **Heap method**           | **Time complexity** | **Space complexity** |
+|---------------------------|---------------------|-----------------------|
+| Construct a Heap          | \( O(N) \)          | \( O(N) \)            |
+| Insert an element         | \( O(\log N) \)     | \( O(1) \)            |
+| Get the top element       | \( O(1) \)          | \( O(1) \)            |
+| Delete the top element    | \( O(\log N) \)     | \( O(1) \)            |
+| Get the size of a Heap    | \( O(1) \)          | \( O(1) \)            |
+
+N is the number of elements in the heap.
