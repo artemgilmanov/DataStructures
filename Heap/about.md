@@ -691,3 +691,139 @@ public class Program
 | Get the size of a Heap    | \( O(1) \)          | \( O(1) \)            |
 
 N is the number of elements in the heap.
+
+## Complete Code
+
+Min Heap:
+
+```cshrp
+using System;
+using System.Collections.Generic;
+
+public class Program
+{
+    public static void Main()
+    {
+        // Construct an instance of Min Heap
+        var minHeap = new PriorityQueue<int, int>();
+        
+        // Add 3, 1, 2 respectively to the Min Heap
+        minHeap.Enqueue(3, 3);
+        minHeap.Enqueue(1, 1);
+        minHeap.Enqueue(2, 2);
+        
+        // Check all elements in the Min Heap
+        Console.WriteLine("minHeap: " + string.Join(", ", GetHeapElements(minHeap)));
+        
+        // Get the top element of the Min Heap
+        int peekNum = minHeap.Peek();
+        Console.WriteLine("peek number: " + peekNum); // Output: 1
+        
+        // Delete the top element in the Min Heap
+        minHeap.TryDequeue(out int pollNum, out _);
+        Console.WriteLine("poll number: " + pollNum); // Output: 1
+        
+        // Check the top element after deleting 1
+        Console.WriteLine("peek number: " + minHeap.Peek()); // Output: 2
+        
+        // Check all elements in the Min Heap
+        Console.WriteLine("minHeap: " + string.Join(", ", GetHeapElements(minHeap))); // Output: 2, 3
+        
+        // Check the number of elements in the Min Heap
+        int heapSize = minHeap.Count;
+        Console.WriteLine("minHeap size: " + heapSize); // Output: 2
+        
+        // Check if the Min Heap is empty
+        bool isEmpty = minHeap.Count == 0;
+        Console.WriteLine("isEmpty: " + isEmpty); // Output: False
+    }
+    
+    // Helper method to get all elements from the heap (for display purposes)
+    private static IEnumerable<int> GetHeapElements(PriorityQueue<int, int> heap)
+    {
+        // Note: This is just for demonstration - dequeuing all elements modifies the heap
+        var elements = new List<int>();
+        while (heap.Count > 0)
+        {
+            heap.TryDequeue(out int element, out _);
+            elements.Add(element);
+        }
+        // Re-add elements back to heap (since we removed them)
+        foreach (var element in elements)
+        {
+            heap.Enqueue(element, element);
+        }
+        return elements;
+    }
+}
+```
+
+Max Heap:
+
+```cshrp
+using System;
+using System.Collections.Generic;
+
+public class Program
+{
+    public static void Main()
+    {
+        // Construct an instance of Max Heap using custom comparer
+        var maxHeap = new PriorityQueue<int, int>(Comparer<int>.Create((x, y) => y.CompareTo(x)));
+        
+        // Add 1, 3, 2 respectively to the Max Heap
+        maxHeap.Enqueue(1, 1);
+        maxHeap.Enqueue(3, 3);
+        maxHeap.Enqueue(2, 2);
+        
+        // Check all elements in the Max Heap
+        Console.WriteLine("maxHeap: " + string.Join(", ", GetHeapElements(maxHeap))); // Output: 3, 1, 2
+        
+        // Get the top element of the Max Heap
+        int peekNum = maxHeap.Peek();
+        Console.WriteLine("peek number: " + peekNum); // Output: 3
+        
+        // Delete the top element in the Max Heap
+        maxHeap.TryDequeue(out int pollNum, out _);
+        Console.WriteLine("poll number: " + pollNum); // Output: 3
+        
+        // Check the top element after deleting 3
+        Console.WriteLine("peek number: " + maxHeap.Peek()); // Output: 2
+        
+        // Check all elements in the Max Heap
+        Console.WriteLine("maxHeap: " + string.Join(", ", GetHeapElements(maxHeap))); // Output: 2, 1
+        
+        // Check the number of elements in the Max Heap
+        int heapSize = maxHeap.Count;
+        Console.WriteLine("maxHeap size: " + heapSize); // Output: 2
+        
+        // Check if the Max Heap is empty
+        bool isEmpty = maxHeap.Count == 0;
+        Console.WriteLine("isEmpty: " + isEmpty); // Output: False
+    }
+    
+    // Helper method to get all elements from the heap (for display purposes)
+    private static IEnumerable<int> GetHeapElements(PriorityQueue<int, int> heap)
+    {
+        var elements = new List<int>();
+        var tempHeap = new PriorityQueue<int, int>(heap.Comparer);
+        
+        // Copy elements to list and temporary heap
+        while (heap.Count > 0)
+        {
+            heap.TryDequeue(out int element, out int priority);
+            elements.Add(element);
+            tempHeap.Enqueue(element, priority);
+        }
+        
+        // Restore original heap
+        while (tempHeap.Count > 0)
+        {
+            tempHeap.TryDequeue(out int element, out int priority);
+            heap.Enqueue(element, priority);
+        }
+        
+        return elements;
+    }
+}
+```
