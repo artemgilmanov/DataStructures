@@ -834,3 +834,145 @@ Heap is a commonly used data structure in computer science. In this chapter, we 
 Heap Sort
 The Top-K problem
 The K-th element
+
+## Heap Sort
+
+When we discussed selection sort, the basic principle involved finding the minimum element and moving it to the front. We repeated this continuously until we sorted the entire list. But as we saw, selection sort has a running time of 
+O
+(
+n
+2
+)
+O(n 
+2
+ ), since for every iteration, we need to find the minimum element in the list which takes 
+O
+(
+n
+)
+O(n) time. We can improve upon this by using a special data structure called a heap.
+
+To review the basics of the heap data structure, you can visit the Heap Explore Card. The core concept of the heap sort involves constructing a heap from our input and repeatedly removing the minimum/maximum element to sort the array. A naive approach to heapsort would start with creating a new array and adding elements one by one into the new array. As with previous sorting algorithms, this sorting algorithm can also be performed in place, so no extra memory is used in terms of space complexity.
+
+The key idea for in-place heapsort involves a balance of two central ideas:
+(a) Building a heap from an unsorted array through a “bottom-up heapification” process, and
+(b) Using the heap to sort the input array.
+
+Heapsort traditionally uses a max-heap to sort the array, although a min-heap also works, but its implementation is a little less elegant.
+
+Algorithm for “bottom-up heapification” of input into max-heap. Given an input array, we can represent it as a binary tree. If the parent node is stored at index i, the left child will be stored at index 2i + 1 and the right child at index 2i + 2 (assuming the indexing starts at 0).
+To convert it to a max-heap, we proceed with the following steps:
+
+Start from the end of the array (bottom of the binary tree).
+There are two cases for a node
+It is greater than its left child and right child (if any).
+In this case, proceed to next node (one index before current array index)
+There exists a child node that is greater than the current node
+In this case, swap the current node with the child node. This fixes a violation of the max-heap property
+Repeat the process with the node until the max-heap property is no longer violated
+Repeat step 2 on every node in the binary tree from bottom-up.
+A key property of this method is that by processing the nodes from the bottom-up, once we are at a specific node in our heap, it is guaranteed that all child nodes are also heaps. Once we have “heapified” the input, we can begin using the max-heap to sort the list. To do so, we will:
+
+Take the maximum element at index 0 (we know this is the maximum element because of the max-heap property) and swap it with the last element in the array (this element's proper place).
+We now have sorted an element (the last element). We can now ignore this element and decrease heap size by 1, thereby omitting the max element from the heap while keeping it in the array.
+Treat the remaining elements as a new heap. There are two cases:
+The root element violates the max-heap property
+Sink this node into the heap until it no longer violates the max-heap property. Here the concept of "sinking" a node refers to swapping the node with one of its children until the heap property is no longer violated.
+The root element does not violate the max-heap property
+Proceed to step (4)
+Repeat step 1 on the remaining unsorted elements. Continue until all elements are sorted.
+The key aspect that makes heapsort better than selection sort is the running time of the algorithm is now 
+O
+(
+N
+log
+⁡
+N
+)
+O(NlogN). This is a result of the fact that removing the max element from the heap, which is the central operation in the sort is a 
+O
+(
+log
+⁡
+N
+)
+O(logN) operation, which has to be performed in the worst case 
+N
+−
+1
+N−1 times. Note that in-place heapification is an 
+O
+(
+N
+)
+O(N) operation, so it has no impact on the worst-case time complexity of heapsort.
+
+In terms of space complexity, since we are treating the input array as a heap and creating no extra space (all operations are in-place), heapsort is 
+O
+(
+1
+)
+O(1).
+
+The best way to understand heapsort is by seeing it in action. Below is an animation of heapsort:
+
+```cshrp
+public class Solution 
+{
+    public void HeapSort(int[] arr) 
+    {
+        // Build max heap (rearrange array)
+        for (int i = arr.Length / 2 - 1; i >= 0; i--)
+        {
+            MaxHeapify(arr, arr.Length, i);
+        }
+
+        // One by one extract elements from heap
+        for (int i = arr.Length - 1; i > 0; i--)
+        {
+            // Swap current root with last element
+            (arr[i], arr[0]) = (arr[0], arr[i]);
+            
+            // Call max heapify on the reduced heap
+            MaxHeapify(arr, i, 0);
+        }
+    }
+
+    private void MaxHeapify(int[] arr, int heapSize, int index) 
+    {
+        int left = 2 * index + 1;
+        int right = 2 * index + 2;
+        int largest = index;
+
+        if (left < heapSize && arr[left] > arr[largest])
+        {
+            largest = left;
+        }
+
+        if (right < heapSize && arr[right] > arr[largest])
+        {
+            largest = right;
+        }
+
+        if (largest != index)
+        {
+            // Swap elements
+            (arr[index], arr[largest]) = (arr[largest], arr[index]);
+            
+            // Recursively heapify the affected subtree
+            MaxHeapify(arr, heapSize, largest);
+        }
+    }
+}
+```
+
+The main advantage of heapsort is it's generally much faster than the other comparison based sorts on sufficiently large inputs as a consequence of the running time. However, there are a few undesirable qualities in the algorithm. For one, it is not a stable sort. It also turns out that in practice, this algorithm performs worse than other 
+O
+(
+N
+log
+⁡
+N
+)
+O(NlogN) sorts as a result of bad cache locality properties. Heapsort swaps elements based on locations in heaps, which can cause many read operations to access indices in a seemingly random order, causing many cache misses, which will result in practical performance hits.
+
