@@ -135,3 +135,224 @@ In the above graph, each node in oval represents a decision node, while each nod
  
 ## References
 - (Fisher,R.A. "The use of multiple measurements in taxonomic problems" Annual Eugenics, 7, Part II, 179-188 (1936))[https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1469-1809.1936.tb02137.x]
+
+## Model Inference - Decision Tree
+
+Now one might wonder how the decision tree works, i.e. how we can apply the decision tree to classify a sample. This step is also called model inference in machine learning. Basically, to apply the decision tree, is to traverse the tree from top to down. At each decision node, we follow the corresponding branch with regards to the result of condition testing. When we reach the leaf node of the tree, we take the label of the leaf node as the classification result for the sample. 
+
+Let us take the first sample from the above table as an example 
+X
+X, as follows:
+
+
+
+We then can break down the steps to apply the decision tree that we gave as an example in the definition article for this particular example 
+X
+X, in the below graph where we highlight the path in red and denote each step with number. 
+
+
+
+ 
+
+Starting from the root node with the condition 
+{
+petal_length
+<
+=
+3.0
+}
+{petal_length<=3.0}
+, by comparing the corresponding attribute in the sample 
+X
+X with the value on the right hand side of the condition, the test result of the condition turns out to be false. Therefore, we move on to its right child node.
+
+Now we are at the decision node with the condition 
+{
+petal_length
+<
+=
+4.8
+}
+{petal_length<=4.8}, similarly by testing the condition, this time we would move on to its left child node. 
+
+Next, at the decision node with the condition 
+{
+petal_width
+<
+=
+1.7
+}
+{petal_width<=1.7}, we would then move on to its right child node which turns out to be a leaf node. As a result, by applying the decision tree, we obtain the classification result for the sample 
+X
+X as 
+"virginica"
+"virginica", which is indeed the actual category of the sample.
+As we can see, the conjunction of conditions along the path also forms a chain of rules, which explains how the label is chosen. This chain of rules serves naturally as the interpretability of the decision tree model, i.e. the reasoning that is comprehensive for humans to understand how the prediction (i.e. decision) is made by the machine. This interpretability is one of the advantages of decision tree model, comparing to the blackbox models such as those neural network based models.
+
+##  Algorithm - Decision Tree
+
+In this article, we explain the algorithm to build a decision tree for classification problems. Here is the overall intuition about the algorithm:
+
+The algorithm to construct a decision tree follows the approach of divide-and-conquer, i.e. we recursivelly splitting the input samples into two subgroups with decision node, until we no longer need to split them. At the end, each of the samples is assigned to a leaf node, and we label the leaf node with the category of the majority samples within the leaf node.
+
+As one can see, we can implement the decision tree construction algorithm by recursion. Given a list of samples with various labels, to construct a decision tree that could assign the sample with a proper label, here are the base cases and the recurrence relation of the recursive algorithm: 
+
+base cases: If the samples are of the same labels, then we do not need to further split the samples. This is the fundamental base case. One can define more base cases in order to regulate the complexity of the final tree.
+
+recurrence relation: We find the most distinguishable feature of the samples and also the best value to split on, in order to obtain two subgroups of samples. We then construct subtrees out of the split subgroups. The criterion to split the samples is twofold: 1). we should reduce the samples into smaller scales in a fast manner, so that we could reduce the occurrence of recursion, i.e. reduce the cost of the algorithm. 2). we should also make sure the split subgroups are more uniform so that it becomes easier to classify the samples. We will discuss more about the criterion in the following articles.
+ 
+Here is an example of pseudo code on how to construct a decision tree.
+
+```cshrp
+using System;
+using System.Collections.Generic;
+
+public class TreeNode
+{
+    public string Feature { get; set; }    // Feature to split on (null for leaf nodes)
+    public object SplitValue { get; set; } // Value to split on
+    public TreeNode Left { get; set; }     // Left child (values <= split value)
+    public TreeNode Right { get; set; }    // Right child (values > split value)
+    public object Prediction { get; set; } // Prediction for leaf nodes
+}
+
+public class DecisionTreeBuilder
+{
+    private int maxTreeDepth;
+    private int minNodeSize;
+
+    public DecisionTreeBuilder(int maxDepth = 10, int minSize = 5)
+    {
+        maxTreeDepth = maxDepth;
+        minNodeSize = minSize;
+    }
+
+    public TreeNode BuildDecisionTree(List<Dictionary<string, object>> samples, 
+                                    int currentDepth = 0)
+    {
+        // Base cases
+        if (AllSamplesSameTarget(samples) 
+        {
+            return CreateLeafNode(samples);
+        }
+        
+        if (currentDepth >= maxTreeDepth || samples.Count < minNodeSize)
+        {
+            return CreateLeafNode(samples);
+        }
+
+        // Find best split
+        var (feature, value) = FindBestSplit(samples);
+        if (feature == null) // No good split found
+        {
+            return CreateLeafNode(samples);
+        }
+
+        // Split samples
+        var (leftSamples, rightSamples) = SplitSamples(samples, feature, value);
+
+        // Create decision node
+        var node = new TreeNode
+        {
+            Feature = feature,
+            SplitValue = value,
+            Left = BuildDecisionTree(leftSamples, currentDepth + 1),
+            Right = BuildDecisionTree(rightSamples, currentDepth + 1)
+        };
+
+        return node;
+    }
+
+    private bool AllSamplesSameTarget(List<Dictionary<string, object>> samples)
+    {
+        if (samples.Count == 0) return true;
+        var firstTarget = samples[0]["target"];
+        foreach (var sample in samples)
+        {
+            if (!sample["target"].Equals(firstTarget))
+                return false;
+        }
+        return true;
+    }
+
+    private TreeNode CreateLeafNode(List<Dictionary<string, object>> samples)
+    {
+        // In a real implementation, you'd calculate the most common target value
+        // or average value for regression
+        return new TreeNode 
+        {
+            Prediction = samples.Count > 0 ? samples[0]["target"] : null
+        };
+    }
+
+    private (string feature, object value) FindBestSplit(List<Dictionary<string, object>> samples)
+    {
+        // Implementation depends on your data types and splitting criteria
+        // This is a simplified placeholder
+        double bestGain = -1;
+        string bestFeature = null;
+        object bestValue = null;
+
+        foreach (var feature in samples[0].Keys)
+        {
+            if (feature == "target") continue;
+
+            var (value, gain) = FindBestSplitForFeature(samples, feature);
+            if (gain > bestGain)
+            {
+                bestGain = gain;
+                bestFeature = feature;
+                bestValue = value;
+            }
+        }
+
+        return (bestFeature, bestValue);
+    }
+
+    private (object value, double gain) FindBestSplitForFeature(
+        List<Dictionary<string, object>> samples, string feature)
+    {
+        // Simplified - in practice you'd calculate information gain or Gini impurity
+        // This would handle different data types (continuous/discrete) differently
+        return (samples[0][feature], 0.5); // Placeholder
+    }
+
+    private (List<Dictionary<string, object>> left, 
+            List<Dictionary<string, object>> right) SplitSamples(
+        List<Dictionary<string, object>> samples, string feature, object value)
+    {
+        var left = new List<Dictionary<string, object>>();
+        var right = new List<Dictionary<string, object>>();
+
+        foreach (var sample in samples)
+        {
+            if (CompareValues(sample[feature], value) <= 0)
+                left.Add(sample);
+            else
+                right.Add(sample);
+        }
+
+        return (left, right);
+    }
+
+    private int CompareValues(object a, object b)
+    {
+        // Implement proper comparison for your data types
+        return Comparer<object>.Default.Compare(a, b);
+    }
+}
+```
+## Stopping Conditions
+A decision tree grows from top to bottom. When it stops growing, a leaf node is added. Here are a few conditions when we stop splitting samples :
+
+All the examples that fall into the current node belong to the same category, i.e. no further classification is needed.
+
+The tree reaches its predefined max_depth.
+The number of examples that fall into the current node is less than the predefined minimal_number_of_examples.
+The condition (1) is a natural and optimal case to stop adding more nodes, since we achieve our initial goal, i.e. there is no more ambiguity when the samples reach the node. While the conditions of (2) and (3) are more of an intervention to prevent the decision tree from overgrowing itself which leads to the scenario of overfitting. This intervention is also known as regularization in machine learning, which is a measure to prevent the model from overfitting.
+
+## Further Readings
+- [1]. Breiman, L. (1984). CART: Classification and Regression Trees. New York: Routledge.
+- https://www.taylorfrancis.com/books/mono/10.1201/9781315139470/classification-regression-trees-leo-breiman-jerome-friedman-olshen-charles-stone
+
+## Splitting Criterion
