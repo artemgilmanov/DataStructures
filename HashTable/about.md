@@ -193,3 +193,44 @@ public class Program
 }
 
 ```
+
+## Find Duplicates By Hash Set
+
+As we know, it is easy and effective to insert a new value and check if a value is in a hash set or not.
+
+Therefore, typically, a hash set is used to check if a value has ever appeared or not.
+
+ 
+
+An Example
+Let's look at an example:
+
+Given an array of integers, find if the array contains any duplicates. 
+
+This is a typical problem which can be solved by a hash set.
+
+You can simply iterate each value and insert the value into the set. If a value has already been in the hash set, there is a duplicate.
+
+ 
+
+Template
+Here we provide a template for you to solve this kind of problems:
+
+```cshrp
+using System.Collections.Generic;
+
+bool FindDuplicates<T>(List<T> keys)
+{
+    HashSet<T> hashset = new HashSet<T>();
+    foreach (T key in keys)
+    {
+        if (hashset.Contains(key))
+        {
+            return true;
+        }
+        hashset.Add(key);
+    }
+    return false;
+}
+```
+
