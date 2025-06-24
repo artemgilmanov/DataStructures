@@ -568,3 +568,385 @@ The code for the disjoint set is highly modularized. You might want to become fa
 Finally, we strongly encourage you to solve the exercise problems using the abovementioned implementation of the “disjoint set” data structure. Some of these problems can be solved using other data structures and algorithms, but we highly recommend that you practice solving them using the “disjoint set” data structure.
 
 ##  Overview of Depth-First Search Algorithm
+
+Previously, we learned how to check the connectivity between two vertices with the “disjoint set” data structure. Now, let's switch gears and consider: Given a graph, how can we find all of its vertices, and how can we find all paths between two vertices?
+
+The depth-first search algorithm is ideal in solving these kinds of problems because it can explore all paths from the start vertex to all other vertices. Let's start by considering an example. In Figure 7, there are five vertices [A, C, D, B, E]. Given two vertices A and B, there are two paths between them. One path is [A, C, D, B], and the other is [A, E, B].
+
+In Graph theory, the depth-first search algorithm (abbreviated as DFS) is mainly used to:
+
+1. Traverse all vertices in a “graph”;
+2. Traverse all paths between any two vertices in a “graph”.
+
+## Traversing all Vertices – Depth-First Search Algorithm
+
+Complexity Analysis
+Time Complexity: O(V+E). Here, V represents the number of vertices, and E represents the number of edges. We need to check every vertex and traverse through every edge in the graph.
+
+Space Complexity: O(V). The space complexity of DFS depends on the maximum depth of recursion. In the worst case, if the graph is a straight line or a long path, the DFS recursion can go as deep as the number of vertices. Therefore, the space complexity of DFS is O(V).
+
+## Traversing all paths between two vertices – Depth-First Search Algorithm
+
+# Complexity Analysis
+
+## Time Complexity: 
+**O((V−1)!)**  
+The above example is for an undirected graph. The worst-case scenario, when trying to find all paths, is a complete graph. A complete graph is a graph where every vertex is connected to every other vertex.
+
+In a complete graph, there will be **V−1** unique paths of length one that start at the source vertex; one of these paths will go to the target and end. Each of the remaining paths will have **V−2** unique paths that extend from it (since none of them will go back to the source vertex which was already visited). This process will continue and lead to approximately **(V−1)!** total paths. Remember, once a path reaches the target vertex, it ends, so the total number of paths will be less than **(V−1)!**.
+
+The precise total number of paths in the worst-case scenario is equivalent to the Number of Arrangements of the subset of vertices excluding the source and target node, which equals **e⋅(V−2)!**.
+
+While finding all paths, at each iteration, we add all valid paths from the current vertex to the stack, as shown in the video. Each time we add a path to the stack requires **O(V)** time to create a copy of the current path, append a vertex to it, and push it onto the stack. Since the path grows by one vertex each time, a path of length **V** must have been copied and pushed onto the stack **V** times before reaching its current length. Therefore, it is intuitive to think that each path should require **O(V²)** time in total. However, there is a flaw in our logic. Consider the example above; at 2:50 we add ADE to the stack. Then at 3:20, we add ADEC, ADEB, and ADEF to the stack. ADE is a subpath of ADEC, ADEB, and ADEF, but ADE was only created once. So the time required for each path to create ADE can be thought of as **O(V)** divided by the number of paths that stem from ADE. With this in mind, the time spent to create a path is **V** plus **V−1** divided by the number of paths that stem from this subpath plus **V−2** times... For a complete graph with many nodes, this averages out to **O(2⋅V) = O(V)** time per path.
+
+Thus, the time complexity to find all paths in an undirected graph in the worst-case scenario is equal to the number of paths found **O((V−2)!)** times the average time to find a path **O(V)** which simplifies to **O((V−1)!)**.
+
+## Space Complexity: 
+**O(V³)**  
+The space used is by the stack which will contain:
+- **(V−1)** paths after adding first **V−1** paths to the stack.
+- **(V−1)−1 + (V−2)** paths after popping one path and adding second set of paths.
+- **(V−1)−1 + (V−2)−1 + (V−3)−1 + ...**
+
+≈ **V⋅(V−1)/2 + 1** paths will be at most in the stack, and each path added to the stack will take **O(V)** space.  
+Therefore, in total, this solution will require **O(V⋅(V−1)/2 + 1)⋅V = O(V³)** space. Note that the space used to store the result does not count towards the space complexity.
+
+## LeetCode 1971 - Find if Path Exists in Graph - DFS
+
+```cshrp
+using System;
+using System.Collections.Generic;
+
+public class Solution {
+    public bool ValidPath(int n, int[][] edges, int start, int end) {
+        // Create adjacency list
+        var adjacencyList = new List<List<int>>();
+        for (int i = 0; i < n; i++) {
+            adjacencyList.Add(new List<int>());
+        }
+        
+        // Populate adjacency list (undirected graph)
+        foreach (var edge in edges) {
+            adjacencyList[edge[0]].Add(edge[1]);
+            adjacencyList[edge[1]].Add(edge[0]);
+        }
+        
+        // DFS using stack
+        var stack = new Stack<int>();
+        stack.Push(start);
+        var visited = new bool[n];
+        
+        while (stack.Count > 0) {
+            int node = stack.Pop();
+            
+            // Check if we've reached the target
+            if (node == end) {
+                return true;
+            }
+            
+            // Skip if already visited
+            if (visited[node]) {
+                continue;
+            }
+            
+            visited[node] = true;
+            
+            // Add all neighbors to stack
+            foreach (int neighbor in adjacencyList[node]) {
+                stack.Push(neighbor);
+            }
+        }
+        
+        return false;
+    }
+}
+
+// Example usage
+public class Program {
+    public static void Main() {
+        var solution = new Solution();
+        
+        int n = 6;
+        var edges = new int[][] {
+            new int[] {0, 1},
+            new int[] {0, 2},
+            new int[] {3, 5},
+            new int[] {5, 4},
+            new int[] {4, 3}
+        };
+        
+        Console.WriteLine(solution.ValidPath(n, edges, 0, 5)); // false
+        Console.WriteLine(solution.ValidPath(n, edges, 0, 1)); // true
+    }
+}
+```
+## Complexity Analysis
+
+## Time Complexity:  
+**O(V + E)**  
+
+Here, **V** represents the number of vertices, and **E** represents the number of edges.  
+
+- To create the adjacency list, we must iterate over each of the **E** edges.  
+- In the while loop, at most, we will visit each vertex once.  
+- The for loop inside the while loop will have a cumulative sum of at most **E** iterations since it will iterate over all of the node's neighbors for each node.  
+
+## Space Complexity:  
+**O(V + E)**  
+
+- The adjacency list will contain **O(V + E)** elements.  
+- The stack will also contain **O(E)** elements. However, this can be reduced to **O(V)** by checking whether a neighbor node has been seen before adding it to the stack.  
+- The `seen` set will use **O(V)** space to store the visited nodes.
+
+## LeetCode 797 - All Paths From Source to Target - DFS
+
+```cshrp
+using System;
+using System.Collections.Generic;
+
+public class Solution
+{
+    // DFS
+    public IList<IList<int>> AllPathsSourceTarget(int[][] graph)
+    {
+        List<IList<int>> paths = new List<IList<int>>();
+        if (graph == null || graph.Length == 0)
+        {
+            return paths;
+        }
+
+        DFS(graph, 0, new List<int>(), paths);
+        return paths;
+    }
+
+    private void DFS(int[][] graph, int node, List<int> path, List<IList<int>> paths)
+    {
+        path.Add(node);
+        if (node == graph.Length - 1)
+        {
+            paths.Add(new List<int>(path));
+            return;
+        }
+
+        foreach (int nextNode in graph[node])
+        {
+            DFS(graph, nextNode, path, paths);
+            path.RemoveAt(path.Count - 1); // Backtrack
+        }
+    }
+}
+
+```
+
+## Complexity Analysis
+
+### Time Complexity:  
+**O(2ᴠ · V)**  
+
+Here, **V** represents the number of vertices.
+
+- For a directed acyclic graph (DAG) with **V** vertices, there could be at most **2^(V-1) - 1** possible paths from the starting vertex to the target vertex.
+- We need **O(V)** time to build each such path.
+- Therefore, a loose upper bound would be **(2^(V-1) - 1) · O(V) = O(2ᴠ · V)**.
+- Due to path overlaps during traversal, the actual time spent will be somewhat lower.
+
+### Space Complexity:  
+**O(V)**  
+
+- The recursion depth cannot exceed **V** levels.
+- We need **O(V)** space to store visited vertices during recursive traversal.
+- Note: Space required for storing the output paths is not included in this complexity.
+
+##  Overview of Breadth-First Search Algorithm
+
+Previously, we discussed the “depth-first search” algorithm. This section will talk about a closely related and equally popular algorithm called “breadth-first search”. Similarly, the “breadth-first search” algorithm can traverse all vertices of a “graph” and traverse all paths between two vertices. However, the most advantageous use case of “breadth-first search” is to efficiently find the shortest path between two vertices in a “graph” where all edges have equal and positive weights.
+
+Although the “depth-first search” algorithm can find the shortest path between two vertices in a “graph” with equal and positive weights, it must traverse all paths between two vertices before finding the shortest one. The “breadth-first search” algorithm, in most cases, can find the shortest path without traversing all paths. This is because when using "breadth-first search", as soon as a path between the source vertex and target vertex is found, it is guaranteed to be the shortest path between the two nodes.
+
+In Figure 8, the vertices are [A, C, D, B, E]. Given vertices A and B, there are two paths between them. One path is [A, C, D, B], and the other is [A, E, B]. Obviously, [A, E, B] is the shortest path between A and B.
+
+In Graph theory, the primary use cases of the “breadth-first search” (“BFS”) algorithm are:
+1. Traversing all vertices in the “graph”;
+2.Finding the shortest path between two vertices in a graph where all edges have equal and positive weights.
+
+## Traversing all Vertices - Breadth-First Search
+
+## Complexity Analysis
+
+### Time Complexity:  
+**O(V + E)**  
+
+Where:
+- **V** = number of vertices
+- **E** = number of edges
+
+We need to:
+1. Check every vertex exactly once
+2. Traverse through every edge exactly once
+
+This matches the time complexity of the standard DFS approach.
+
+### Space Complexity:  
+**O(V)**  
+
+Space usage consists of:
+1. Queue storage: At most **O(V)** vertices (since we check visited status before enqueueing)
+2. Visited tracking: **O(V)** space to store visited status for all vertices
+
+## Shortest Path Between Two Vertices - Breadth-First Search
+
+## Complexity Analysis
+
+### Time Complexity
+**O(V + E)**  
+where:  
+- **V** = number of vertices  
+- **E** = number of edges  
+
+In the worst case (maximum distance between start and target vertices), we must:  
+- Visit each vertex exactly once  
+- Traverse each edge exactly once  
+
+### Space Complexity 
+**O(V)** due to:  
+- Queue storage: up to V vertices  
+- Visited tracking: V boolean flags  
+
+*Note: This analysis assumes an adjacency list representation.*
+
+## LeetCode 1971 - Find if Path Exists in Graph - BFS
+
+```cshrp
+using System;
+using System.Collections.Generic;
+
+public class Solution
+{
+    public bool ValidPath(int n, int[][] edges, int start, int end)
+    {
+        List<List<int>> adjacencyList = new List<List<int>>();
+        for (int i = 0; i < n; i++)
+        {
+            adjacencyList.Add(new List<int>());
+        }
+
+        foreach (int[] edge in edges)
+        {
+            adjacencyList[edge[0]].Add(edge[1]);
+            adjacencyList[edge[1]].Add(edge[0]);
+        }
+
+        Queue<int> queue = new Queue<int>();
+        bool[] seen = new bool[n];
+        queue.Enqueue(start);
+        seen[start] = true;
+
+        while (queue.Count > 0)
+        {
+            int node = queue.Dequeue();
+
+            if (node == end)
+            {
+                return true;
+            }
+
+            foreach (int neighbor in adjacencyList[node])
+            {
+                if (!seen[neighbor])
+                {
+                    seen[neighbor] = true;
+                    queue.Enqueue(neighbor);
+                }
+            }
+        }
+
+        return false;
+    }
+}
+```
+
+## Complexity Analysis
+
+### Time Complexity: O(V + E)
+- **V** = Number of vertices
+- **E** = Number of edges
+
+Breakdown:
+1. **Adjacency list construction**: O(E) (iterate through all edges)
+2. **Vertex processing**: O(V) (visit each vertex once)
+3. **Edge traversal**: O(E) (process all neighbors through adjacency lists)
+
+### Space Complexity: O(V + E)
+Components:
+1. **Adjacency list**: O(V + E) storage
+2. **Queue**: O(V) in worst case
+3. **Visited set**: O(V) for tracking
+
+*Note: This analysis applies to standard BFS/DFS implementations using adjacency lists.*
+
+## LeetCode 797 - All Paths From Source to Target - BFS
+
+## Complexity Analysis
+
+```cshrp
+using System;
+using System.Collections.Generic;
+
+public class Solution
+{
+    public IList<IList<int>> AllPathsSourceTarget(int[][] graph)
+    {
+        List<IList<int>> paths = new List<IList<int>>();
+        if (graph == null || graph.Length == 0)
+        {
+            return paths;
+        }
+
+        Queue<List<int>> queue = new Queue<List<int>>();
+        List<int> path = new List<int> { 0 };
+        queue.Enqueue(path);
+
+        while (queue.Count > 0)
+        {
+            List<int> currentPath = queue.Dequeue();
+            int node = currentPath[currentPath.Count - 1];
+
+            foreach (int nextNode in graph[node])
+            {
+                List<int> tmpPath = new List<int>(currentPath) { nextNode };
+
+                if (nextNode == graph.Length - 1)
+                {
+                    paths.Add(new List<int>(tmpPath));
+                }
+                else
+                {
+                    queue.Enqueue(new List<int>(tmpPath));
+                }
+            }
+        }
+
+        return paths;
+    }
+}
+
+```
+
+### Time Complexity: O(2ᴠ·V)
+- **V** = Number of vertices
+
+**Explanation:**
+1. Maximum possible paths: 2^(V-1) - 1 (exponential in V)
+2. Each path construction: O(V) time
+3. Upper bound: (2^(V-1) - 1) × O(V) = O(2ᴠ·V)
+4. Actual time may be lower due to path overlap
+
+### Space Complexity: O(2ᴠ·V)
+**Components:**
+1. Queue storage: O(2ᴠ) paths in worst case
+2. Each path: O(V) space
+3. Total: O(2ᴠ·V) space
+
+*Note: This exponential complexity occurs in worst-case scenarios for certain graph traversal problems.*
+
+## Overview of Minimum Spanning Tree
