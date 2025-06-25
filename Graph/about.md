@@ -929,7 +929,6 @@ public class Solution
         return paths;
     }
 }
-
 ```
 
 ### Time Complexity: O(2ᴠ·V)
@@ -950,3 +949,330 @@ public class Solution
 *Note: This exponential complexity occurs in worst-case scenarios for certain graph traversal problems.*
 
 ## Overview of Minimum Spanning Tree
+
+You might wonder: what is a spanning tree? A spanning tree is a connected subgraph in an undirected graph where all vertices are connected with the minimum number of edges. In Figure 9, all pink edges [(A, B), (A, C), (A, D), (A, E)] form a tree, which is a spanning tree of this undirected graph. Note that [(A, E), (A, B), (B, C), (C, D)] is also a spanning tree of the undirected graph. Thus, an “undirected graph” can have multiple spanning trees.
+
+
+Figure 9. Spanning tree
+
+After learning what a spanning tree is, you might have another question: what is a minimum spanning tree? A minimum spanning tree is a spanning tree with the minimum possible total edge weight in a “weighted undirected graph”. In Figure 10, a spanning tree formed by green edges [(A, E), (A, B), (B, C), (C, D)] is one of the minimum spanning trees in this weighted undirected graph. Actually, [(A, E), (E, D), (A, B), (B, C)] forms another minimum spanning tree of the weighted undirected graph. Thus, a “weighted undirected graph” can have multiple minimum spanning trees.
+
+In this chapter, we will learn about the “cut property and two algorithms for constructing a “minimum spanning tree”:
+- Kruskal’s Algorithm
+- Prim’s algorithm
+
+## Cut Property
+
+What is a “cut”? Although many theorems are named after people’s names, “cut” is not one of them. To understand the “cut property”, we need to understand two basic concepts.
+
+- First, in Graph theory, a “cut” is a partition of vertices in a “graph” into two disjoint subsets. Figure 11 illustrates a “cut”, where (B, A, E) forms one subset, and (C, D) forms the other subset.
+- Second, a crossing edge is an edge that connects a vertex in one set with a vertex in the other set. In Figure 11, (B, C), (A, C), (A, D), (E, D) are all “crossing edges”.
+
+After knowing the basics of a graph cut, let’s delve into the “cut property”. The cut property provides theoretical support for Kruskal’s algorithm and Prim’s algorithm. So, what is the “cut property”? According to Wikipedia, the “cut property” refers to:
+
+For any cut C of the graph, if the weight of an edge E in the cut-set of C is strictly smaller than the weights of all other edges of the cut-set of C, then this edge belongs to all MSTs of the graph.
+
+## Kruskal’s Algorithm
+
+“Kruskal’s algorithm” is an algorithm to construct a “minimum spanning tree” of a “weighted undirected graph”.
+
+Why does Kruskal’s Algorithm only choose N-1 edges?
+Why can we apply the “greedy strategy”?
+
+## Complexity Analysis
+
+### Time Complexity: O(E log E)
+- **E** = Number of edges
+- **V** = Number of vertices
+
+**Breakdown:**
+1. **Edge Sorting**: O(E log E) (dominant term)
+2. **Union-Find Operations**:
+   - O(α(V)) per operation (Inverse Ackermann function)
+   - O(Eα(V)) total for all edges
+3. **Total**: O(E log E + Eα(V)) = O(E log E) (since log E > α(V) for practical graphs)
+
+### Space Complexity: O(V + E)
+**Components:**
+1. **Union-Find Data Structure**: O(V) space
+2. **Sorting Auxiliary Space**:
+   - Python (Timsort): O(E) worst-case
+   - Java (Quicksort variant): O(log E)
+
+*Note: The space complexity may vary based on the sorting algorithm implementation in different programming languages.*
+
+## LeetCode 1584 - Min Cost to Connect All Points - Kruskal's Algorithm
+
+```cshrp
+using System;
+using System.Collections.Generic;
+
+public class Solution
+{
+    public int MinCostConnectPoints(int[][] points)
+    {
+        if (points == null || points.Length == 0)
+        {
+            return 0;
+        }
+
+        int size = points.Length;
+        PriorityQueue<Edge, int> pq = new PriorityQueue<Edge, int>();
+        UnionFind uf = new UnionFind(size);
+
+        for (int i = 0; i < size; i++)
+        {
+            int[] coordinate1 = points[i];
+            for (int j = i + 1; j < size; j++)
+            {
+                int[] coordinate2 = points[j];
+                int cost = Math.Abs(coordinate1[0] - coordinate2[0]) +
+                           Math.Abs(coordinate1[1] - coordinate2[1]);
+                Edge edge = new Edge(i, j, cost);
+                pq.Enqueue(edge, edge.Cost);
+            }
+        }
+
+        int result = 0;
+        int count = size - 1;
+        while (pq.Count > 0 && count > 0)
+        {
+            Edge edge = pq.Dequeue();
+            if (!uf.Connected(edge.Point1, edge.Point2))
+            {
+                uf.Union(edge.Point1, edge.Point2);
+                result += edge.Cost;
+                count--;
+            }
+        }
+
+        return result;
+    }
+
+    public class Edge
+    {
+        public int Point1 { get; }
+        public int Point2 { get; }
+        public int Cost { get; }
+
+        public Edge(int point1, int point2, int cost)
+        {
+            Point1 = point1;
+            Point2 = point2;
+            Cost = cost;
+        }
+    }
+
+    public class UnionFind
+    {
+        private int[] root;
+        private int[] rank;
+
+        public UnionFind(int size)
+        {
+            root = new int[size];
+            rank = new int[size];
+            for (int i = 0; i < size; i++)
+            {
+                root[i] = i;
+                rank[i] = 1;
+            }
+        }
+
+        public int Find(int x)
+        {
+            if (x == root[x])
+            {
+                return x;
+            }
+            return root[x] = Find(root[x]);
+        }
+
+        public void Union(int x, int y)
+        {
+            int rootX = Find(x);
+            int rootY = Find(y);
+            if (rootX != rootY)
+            {
+                if (rank[rootX] > rank[rootY])
+                {
+                    root[rootY] = rootX;
+                }
+                else if (rank[rootX] < rank[rootY])
+                {
+                    root[rootX] = rootY;
+                }
+                else
+                {
+                    root[rootY] = rootX;
+                    rank[rootX]++;
+                }
+            }
+        }
+
+        public bool Connected(int x, int y)
+        {
+            return Find(x) == Find(y);
+        }
+    }
+}
+
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        int[][] points = new int[][]
+        {
+            new int[] {0, 0},
+            new int[] {2, 2},
+            new int[] {3, 10},
+            new int[] {5, 2},
+            new int[] {7, 0}
+        };
+
+        Solution solution = new Solution();
+        Console.Write("Minimum Cost to Connect Points = ");
+        Console.WriteLine(solution.MinCostConnectPoints(points));
+    }
+}
+```
+
+## Complexity Analysis
+
+### Time Complexity: O(E log E)
+- **E** = Number of edges
+
+**Implementation Details:**
+| Language | Heap Construction | Element Extraction | Total |
+|----------|------------------|--------------------|-------|
+| Python   | O(E)            | O(E log E)         | O(E log E) |
+| C++/Java | O(E log E)      | O(E log E)         | O(E log E) |
+
+*All implementations converge to O(E log E) overall time complexity.*
+
+### Space Complexity: O(E)
+**Storage Requirements:**
+- Priority queue storage for all edges: O(E)
+- Auxiliary space for heap operations: O(1) to O(E) depending on implementation
+
+*Note: The space complexity is dominated by the edge storage in the priority queue.*
+
+## Prim’s Algorithm
+
+The difference between the “Kruskal’s algorithm” and the “Prim’s algorithm”
+“Kruskal’s algorithm” expands the “minimum spanning tree” by adding edges. Whereas “Prim’s algorithm” expands the “minimum spanning tree” by adding vertices.
+
+## Complexity Analysis
+
+### Time Complexity
+- **V** = Number of vertices
+- **E** = Number of edges
+
+**Heap Type** | **Complexity** | **Breakdown**
+-------------|---------------|--------------
+Binary Heap  | O(E log V)    | - Graph traversal: O(V + E) <br> - Heap operations: O(log V) per operation <br> - Total: O((V + E) log V) → O(E log V)
+Fibonacci Heap | O(E + V log V) | - Extract-min: O(log V) <br> - Key decrease: O(1) amortized <br> - Total: O(E + V log V)
+
+*Note: Fibonacci heap provides better theoretical complexity for dense graphs*
+
+### Space Complexity: O(V)
+- Storage for vertices in priority queue
+- Additional O(1) to O(V) auxiliary space depending on implementation
+
+## LeetCode 1584 - Min Cost to Connect All Points - Prim's Algorithm
+
+Note: The approach is a bit different from classical approaches. In the classical approach, we modify the values in the priority queue to update the shortest distance of each node. To do this, we need a "deletable heap", which supports modification in logarithmic time. However, in most cases, for convenience, we use a normal heap, and instead of deleting old values, we keep pushing new nodes into the heap. As a result, it is the same as we keep pushing edges and the total number of elements in the heap would be O(E), where E is the number of edges.
+
+```cshrp
+using System;
+using System.Collections.Generic;
+
+public class Solution
+{
+    public int MinCostConnectPoints(int[][] points)
+    {
+        if (points == null || points.Length == 0)
+        {
+            return 0;
+        }
+
+        int size = points.Length;
+        var pq = new PriorityQueue<Edge, int>();
+        bool[] visited = new bool[size];
+        int result = 0;
+        int count = size - 1;
+
+        // Add all edges from the 0th point
+        int[] coordinate1 = points[0];
+        for (int j = 1; j < size; j++)
+        {
+            int[] coordinate2 = points[j];
+            int cost = Math.Abs(coordinate1[0] - coordinate2[0]) +
+                       Math.Abs(coordinate1[1] - coordinate2[1]);
+            pq.Enqueue(new Edge(0, j, cost), cost);
+        }
+
+        visited[0] = true;
+
+        while (pq.Count > 0 && count > 0)
+        {
+            var edge = pq.Dequeue();
+            int point2 = edge.Point2;
+            if (!visited[point2])
+            {
+                result += edge.Cost;
+                visited[point2] = true;
+
+                for (int j = 0; j < size; j++)
+                {
+                    if (!visited[j])
+                    {
+                        int distance = Math.Abs(points[point2][0] - points[j][0]) +
+                                       Math.Abs(points[point2][1] - points[j][1]);
+                        pq.Enqueue(new Edge(point2, j, distance), distance);
+                    }
+                }
+
+                count--;
+            }
+        }
+
+        return result;
+    }
+
+    public class Edge
+    {
+        public int Point1 { get; }
+        public int Point2 { get; }
+        public int Cost { get; }
+
+        public Edge(int point1, int point2, int cost)
+        {
+            Point1 = point1;
+            Point2 = point2;
+            Cost = cost;
+        }
+    }
+}
+
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        int[][] points = new int[][]
+        {
+            new int[] {0, 0},
+            new int[] {2, 2},
+            new int[] {3, 10},
+            new int[] {5, 2},
+            new int[] {7, 0}
+        };
+
+        Solution solution = new Solution();
+        Console.Write("Minimum Cost to Connect Points = ");
+        Console.WriteLine(solution.MinCostConnectPoints(points));
+    }
+}
+```
+
+## Overview of Single Source Shortest Path
