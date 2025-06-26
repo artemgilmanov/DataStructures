@@ -1276,3 +1276,325 @@ public class Program
 ```
 
 ## Overview of Single Source Shortest Path
+
+Previously, we used the “breadth-first search” algorithm to find the “shortest path” between two vertices. However, the “breadth-first search” algorithm can only solve the “shortest path” problem in “unweighted graphs”. But in real life, we often need to find the “shortest path” in a “weighted graph”.
+
+For example, there may be many routes from your home to a target location, such as a bus station, and the time needed for each route may be different. The route with the shortest distance may not be the one that requires the least amount of time because of the speed limit and traffic jams. So, if we want to find the route that takes the least time from home to a certain bus station, then the weights should be time instead of distance. With that in mind, how can we solve the “shortest path” problem given two vertices in a “weighted graph”?
+
+The main focus of this chapter is to solve such “single source shortest path” problems. Given the starting vertex, find the “shortest path” to any of the vertices in a weighted graph. Once we solve this, we can easily acquire the shortest paths between the starting vertex and a given target vertex.
+
+## Edge Relaxation
+
+An alternative way to understand why this process is called ‘relaxation’ is to imagine that each path is a rubber band of length 1. The original path from A to D is of length 3, so the rubber band was stretched to 3 times its original length. When we relax the path to length 2, by visiting C first, the rubber band is now only stretched to twice its length, so you can imagine the rubber band being relaxed, hence the term edge relaxation.
+
+In this chapter, we will learn two “single source shortest path” algorithms:
+1.Dijkstra’s algorithm
+2.Bellman-Ford algorithm
+“Dijkstra's algorithm” can only be used to solve the “single source shortest path” problem in a graph with non-negative weights.
+
+“Bellman-Ford algorithm”, on the other hand, can solve the “single-source shortest path” in a weighted directed graph with any weights, including, of course, negative weights.
+
+## Dijkstra's Algorithm
+
+“Dijkstra’s algorithm” solves the “single-source shortest path” problem in a weighted directed graph with non-negative weights.
+
+### The Main Idea
+We take the starting point u as the center and gradually expand outward while updating the “shortest path” to reach other vertices.
+
+“Dijkstra's Algorithm” uses a “greedy approach”. Each step selects the “minimum weight” from the currently reached vertices to find the “shortest path” to other vertices.
+
+### Proof of the Algorithm
+Now let's prove that Dijkstra's Algorithm actually leads to the correct answer. We'll do that in the next video.
+
+The “greedy approach” only guarantees that, at each step, it takes the optimal choice in the current state. It does not guarantee that the final result is optimal. So, how does “Dijkstra’s Algorithm” ensure that its final result is optimal?
+
+### Limitation of the Algorithm
+“Dijkstra’s Algorithm” can only be used on graphs that satisfy the following condition:
+- Weights of all edges are non-negative.
+
+## Complexity Analysis
+
+**Variables:**
+- **V** = Number of vertices
+- **E** = Number of edges
+
+### Time Complexity
+
+| Heap Type       | Complexity    | Key Operations |
+|-----------------|---------------|----------------|
+| **Fibonacci Heap** | O(E + V log V) | - Extract-min: O(log V) <br> - Decrease-key: O(1) amortized |
+| **Binary Heap**    | O(V + E log V) | - All heap operations: O(log V) |
+
+**Notes:**
+- Fibonacci heap provides better theoretical performance for dense graphs (E ≈ V²)
+- Binary heap is typically more efficient in practice for sparse graphs
+
+### Space Complexity: O(V)
+- Stores all vertices in the priority queue
+- Auxiliary space requirements are negligible (O(1)) for both implementations
+
+## Bellman Ford Algorithm
+
+As discussed previously, the “Dijkstra algorithm” is restricted to solving the “single source shortest path” problem in graphs without negative weights. So, how could we solve the “single source shortest path” problem in graphs with negative weights? In this chapter, we will introduce the Bellman-Ford algorithm.
+
+### Basic Theorem
+
+Theorem 1: In a “graph with no negative-weight cycles” with N vertices, the shortest path between any two vertices has at most N-1 edges.
+For simplicity, throughout the Bellman-Ford related videos, we will refer to a directed acyclic graph (DAG) as a "regular" graph. However, in general, we encourage you to use the terminology DAG since, in graph theory, a "regular graph" is a graph where every node has the same number of neighbors.
+
+Theorem 2: In a “graph with negative weight cycles”, there is no shortest path.
+
+### Using Dynamic Programming to Find the Shortest Path
+
+## Complexity Analysis
+
+### Variables
+- **V** = Number of vertices in the graph
+- **E** = Number of edges in the graph
+
+### Time Complexity
+**O(V·E)**  
+*Worst-case scenario* (complete graph where all vertices are interconnected):
+- Must examine all possible paths between vertices
+- Each vertex may be connected to up to V-1 edges
+- Results in V × E operations in the worst case
+
+### Space Complexity 
+**O(V²)**  
+Storage requirements:
+- V × V dynamic programming matrix
+- Each cell stores intermediate computation results
+- Quadratic growth relative to input size
+
+*Note: This analysis applies to algorithms requiring full path exploration in dense graphs.*
+
+- Explanation of the Bellman-Ford Algorithm:
+- Optimizing the Bellman-Ford Algorithm
+- Comparing the Two Bellman-Ford Algorithm Variations
+
+Limitation of the algorithm
+“Bellman-Ford algorithm” is only applicable to “graphs” with no “negative weight cycles”.
+
+How does the Bellman-Ford algorithm detect “negative weight cycles”?
+Although the “Bellman-Ford algorithm” cannot find the shortest path in a graph with “negative weight cycles”, it can detect whether there exists a “negative weight cycle” in the “graph”.
+
+Detection method: After relaxing each edge N-1 times, perform the Nth relaxation. According to the “Bellman-Ford algorithm”, all distances must be the shortest after relaxing each edge N-1 times. However, after the Nth relaxation, if there exists distances[u] + weight(u, v) < distances(v) for any edge(u, v), it means there is a shorter path . At this point, we can conclude that there exists a “negative weight cycle”.
+
+## Complexity Analysis
+
+### Variables
+- **V** = Number of vertices
+- **E** = Number of edges
+
+### Time Complexity: O(V·E)
+**Breakdown:**
+1. Outer loop iterates through all vertices: O(V)
+2. Inner relaxation step processes all edges: O(E)
+3. Combined complexity: O(V·E)
+
+*Applies to algorithms where each vertex requires edge relaxation (e.g., Bellman-Ford)*
+
+### Space Complexity: O(V)
+**Storage Requirements:**
+1. Distance array (current iteration): O(V)
+2. Distance array (previous iteration): O(V)
+3. Total auxiliary space: O(V)
+
+*Note: Space efficient as it only maintains two arrays regardless of edge count*
+
+## Improved Bellman-Ford Algorithm with Queue — SPFA Algorithm
+
+Previously, we introduced the “Bellman-Ford Algorithm” along with an improvement. The improvement is that for a graph without negative cycles, after relaxing each edge N-1 times, we can get the minimum distance from the starting vertex to all other vertices. However, there could be unnecessary computation when relaxing all edges N-1 times, resulting in suboptimal time complexity in some cases.
+
+- Limitations of the Bellman-Ford Algorithm
+- SPFA algorithm
+To address the limitations, we introduce an improved variation of the Bellman-Ford algorithm by using a queue. This improvement is known as “the Shortest Path Faster Algorithm” (SPFA algorithm).
+
+Instead of choosing among any untraversed edges, as one does by using the “Bellman-Ford” algorithm, the “SPFA” Algorithm uses a “queue” to maintain the next starting vertex of the edge to be traversed. Only when the shortest distance of a vertex is relaxed and that the vertex is not in the “queue”, we add the vertex to the queue. We iterate the process until the queue is empty. At this point, we have calculated the minimum distance from the given vertex to any vertices.
+
+## Complexity Analysis
+
+### Notation
+- **V** = Number of vertices
+- **E** = Number of edges
+
+### Time Complexity
+**O(V·E)** (Worst-case)
+
+**Breakdown:**
+- **Outer loop**: V iterations (one per vertex)
+- **Inner operations**: E edge relaxations per iteration
+- **Total**: V × E operations
+
+*Note:*
+- Standard Bellman-Ford and improved versions share same worst-case complexity
+- SPFA (Shortest Path Faster Algorithm) typically performs better in practice
+- Average case often significantly faster than worst case
+
+### Space Complexity 
+**O(V)** 
+
+**Storage Requirements:**
+- Distance array: O(V) space
+- Additional O(1) to O(E) auxiliary space depending on implementation
+
+### Practical Considerations
+1. Works well for graphs with negative weights
+2. SPFA optimization reduces average runtime while maintaining same complexity bounds
+3. Particularly efficient for graphs with sparse edge distributions
+
+## LeetCode 787 - Cheapest Flights Within K Stops - Bellman Ford
+
+```cshrp
+using System;
+
+public class Solution
+{
+    public int FindCheapestPrice(int n, int[][] flights, int src, int dst, int k)
+    {
+        if (src == dst)
+        {
+            return 0;
+        }
+
+        int[] previous = new int[n];
+        int[] current = new int[n];
+
+        for (int i = 0; i < n; i++)
+        {
+            previous[i] = int.MaxValue;
+            current[i] = int.MaxValue;
+        }
+
+        previous[src] = 0;
+
+        for (int i = 1; i < k + 2; i++)
+        {
+            current[src] = 0;
+
+            foreach (var flight in flights)
+            {
+                int from = flight[0];
+                int to = flight[1];
+                int cost = flight[2];
+
+                if (previous[from] < int.MaxValue)
+                {
+                    current[to] = Math.Min(current[to], previous[from] + cost);
+                }
+            }
+
+            // Clone current to previous for next iteration
+            Array.Copy(current, previous, n);
+        }
+
+        return current[dst] == int.MaxValue ? -1 : current[dst];
+    }
+}
+```
+
+## Overview of Kahn's Algorithm
+
+When selecting courses for the next semester in college, you might have noticed that some advanced courses have prerequisites that require you to take some introductory courses first. In Figure 12, for example, to take Course C, you need to complete Course B first, and to take Course B, you need to complete Course A first. There are many courses that you must complete for an academic degree. You do not want to find out in the last semester that you have not completed some prerequisite courses for an advanced course. So, how can we arrange the order of the courses adequately while considering these prerequisite relationships between them?
+
+“Topological sorting” helps solve the problem. It provides a linear sorting based on the required ordering between vertices in directed acyclic graphs. To be specific, given vertices u and v, to reach vertex v, we must have reached vertex u first. In “topological sorting”, u has to appear before v in the ordering. The most popular algorithm for “topological sorting” is Kahn’s algorithm.
+
+Note, for simplicity while introducing Kahn's algorithm, we iterated over all of the courses and reduced the in-degree of those for which the current course is a prerequisite. This requires us to iterate over all E prerequisites for all V courses resulting in O(V⋅E) time complexity at the cost of O(V) space to store the in degree for each vertex.
+
+However, this step can be performed more efficiently by creating an adjacency list where adjacencyList[course] contains a list of courses that depend on course. Then when each course is taken, we will only iterate over the courses that have the current course as a prerequisite. This will reduce the total time complexity to O(V+E) at the cost of an additional O(E) space to store the adjacency list.
+
+### Limitation of the Algorithm
+- “Topological sorting” only works with graphs that are directed and acyclic.
+- There must be at least one vertex in the “graph” with an “in-degree” of 0. If all vertices in the “graph” have a non-zero “in-degree”, then all vertices need at least one vertex as a predecessor. In this case, no vertex can serve as the starting vertex.
+
+## Complexity Analysis
+
+### Variables
+- **V** = Number of vertices (courses)
+- **E** = Number of edges (prerequisites)
+
+### Time Complexity: O(V + E)
+**Breakdown:**
+1. **Adjacency List Construction**:
+   - Process all edges: O(E)
+2. **Topological Processing**:
+   - Visit each vertex once: O(V)
+   - Process each edge once: O(E)
+3. **Total**: O(E) + O(V + E) = O(V + E)
+
+### Space Complexity: O(V + E)
+**Storage Requirements**:
+1. **Adjacency List**: O(E) space
+2. **In-degree Tracking**: O(V) space
+3. **Processing Queue**: O(V) in worst case
+
+### Algorithm Characteristics
+- Efficient for course scheduling problems
+- Linear time complexity relative to graph size
+- Optimal for dependency resolution
+
+## LeetCode 210 - Course Schedule II - Topological Sorting - Kahn's Algorithm
+
+```cshrp
+using System;
+using System.Collections.Generic;
+
+public class Solution
+{
+    public int[] FindOrder(int numCourses, int[][] prerequisites)
+    {
+        var graph = new List<List<int>>();
+        for (int i = 0; i < numCourses; ++i)
+        {
+            graph.Add(new List<int>());
+        }
+
+        int[] indegree = new int[numCourses];
+
+        foreach (var p in prerequisites)
+        {
+            int from = p[1];
+            int to = p[0];
+            graph[from].Add(to);
+            indegree[to]++;
+        }
+
+        Queue<int> zeroDegree = new Queue<int>();
+        for (int i = 0; i < indegree.Length; i++)
+        {
+            if (indegree[i] == 0)
+            {
+                zeroDegree.Enqueue(i);
+            }
+        }
+
+        int[] result = new int[numCourses];
+        int index = 0;
+
+        while (zeroDegree.Count > 0)
+        {
+            int course = zeroDegree.Dequeue();
+            result[index++] = course;
+
+            foreach (var child in graph[course])
+            {
+                indegree[child]--;
+                if (indegree[child] == 0)
+                {
+                    zeroDegree.Enqueue(child);
+                }
+            }
+        }
+
+        foreach (int inDeg in indegree)
+        {
+            if (inDeg != 0)
+            {
+                return new int[0];
+            }
+        }
+
+        return result;
+    }
+}
+```
