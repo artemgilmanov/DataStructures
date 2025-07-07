@@ -121,3 +121,220 @@ Note: these characteristics should only be used as guidelines - while they are e
 
 ## Framework for DP Problems
 
+Now that we understand the basics of DP and how to spot when DP is applicable to a problem, we've reached the most important part: actually solving the problem. In this section, we're going to talk about a framework for solving DP problems. This framework is applicable to nearly every DP problem and provides a clear step-by-step approach to developing DP algorithms.
+
+For this article's explanation, we're going to use the problem Climbing Stairs as an example, with a top-down (recursive) implementation. Take a moment to read the problem description and understand what the problem is asking.
+
+Before we start, we need to first define a term: state. In a DP problem, a state is a set of variables that can sufficiently describe a scenario. These variables are called state variables, and we only care about relevant ones. For example, to describe every scenario in Climbing Stairs, there is only 1 relevant state variable, the current step we are on. We can denote this with an integer i. 
+If i = 6, that means that we are describing the state of being on the 6th step. Every unique value of i represents a unique state.
+
+You might be wondering what "relevant" means here. Picture this problem in real life: you are on a set of stairs, and you want to know how many ways there are to climb to say, the 10th step. We're definitely interested in what step you're currently standing on. However, we aren't interested in what color your socks are. You could certainly include sock color as a state variable. Standing on the 8th step wearing green socks is a different state than standing on the 8th step wearing red socks. However, changing the color of your socks will not change the number of ways to reach the 10th step from your current position. Thus the color of your socks is an irrelevant variable. In terms of figuring out how many ways there are to climb the set of stairs, the only relevant variable is what stair you are currently on.
+
+The Framework
+To solve a DP problem, we need to combine 3 things:
+
+A function or data structure that will compute/contain the answer to the problem for every given state.
+
+For Climbing Stairs, let's say we have an function dp where dp(i) returns the number of ways to climb to the ith step.
+Solving the original problem would be as easy as return dp(n).
+
+How did we decide on the design of the function? The problem is asking "How many distinct ways can you climb to the top?", so we decide that the function will represent how many distinct ways you can climb to a certain step - literally the original problem, but generalized for a given state.
+
+Typically, top-down is implemented with a recursive function and hash map, whereas bottom-up is implemented with nested for loops and an array. When designing this function or array, we also need to decide on state variables to pass as arguments. This problem is very simple, so all we need to describe a state is to know what step we are currently on i. We'll see later that other problems have more complex states.
+
+A recurrence relation to transition between states.
+
+A recurrence relation is an equation that relates different states with each other. Let's say that we needed to find how many ways we can climb to the 30th stair. Well, the problem states that we are allowed to take either 1 or 2 steps at a time. Logically, that means to climb to the 30th stair, we arrived from either the 28th or 29th stair. Therefore, the number of ways we can climb to the 30th stair is equal to the number of ways we can climb to the 28th stair plus the number of ways we can climb to the 29th stair.
+
+The problem is, we don't know how many ways there are to climb to the 28th or 29th stair. However, we can use the logic from above to define a recurrence relation. In this case, dp(i) = dp(i - 1) + dp(i - 2). As you can see, information about some states gives us information about other states.
+
+Upon careful inspection, we can see that this problem is actually the Fibonacci sequence in disguise! This is a very simple recurrence relation - typically, finding the recurrence relation is the most difficult part of solving a DP problem. We'll see later how some recurrence relations are much more complicated, and talk through how to derive them.
+
+Base cases, so that our recurrence relation doesn't go on infinitely.
+
+The equation dp(i) = dp(i - 1) + dp(i - 2) on its own will continue forever to negative infinity. We need base cases so that the function will eventually return an actual number.
+
+Finding the base cases is often the easiest part of solving a DP problem, and just involves a little bit of logical thinking. When coming up with the base case(s) ask yourself: What state(s) can I find the answer to without using dynamic programming? In this example, we can reason that there is only 1 way to climb to the first stair (1 step once), and there are 2 ways to climb to the second stair (1 step twice and 2 steps once). Therefore, our base cases are dp(1) = 1 and dp(2) = 2.
+
+We said above that we don't know how many ways there are to climb to the 28th and 29th stairs. However, using these base cases and the recurrence relation from step 2, we can figure out how many ways there are to climb to the 3rd stair. With that information, we can find out how many ways there are to climb to the 4th stair, and so on. Eventually, we will know how many ways there are to climb to the 28th and 29th stairs.
+
+### Example Implementations 
+
+```cshrp
+public class Solution {
+    // A function that represents the answer to the problem for a given state
+    private int Dp(int i) {
+        if (i <= 2) return i; // Base cases
+        return Dp(i - 1) + Dp(i - 2); // Recurrence relation
+    }
+
+    public int ClimbStairs(int n) {
+        return Dp(n);
+    }
+}
+```
+
+Do you notice something missing from the code? We haven't memoized anything! The code above has a time complexity of O(2n) because every call to dp creates 2 more calls to dp. If we wanted to find how many ways there are to climb to the 250th step, the number of operations we would have to do is approximately equal to the number of atoms in the universe.
+
+In fact, without the memoization, this isn't actually dynamic programming - it's just basic recursion. Only after we optimize our solution by adding memoization to avoid repeated computations can it be called DP. As explained in chapter 1, memoization means caching results from function calls and then referring to those results in the future instead of recalculating them. This is usually done with a hashmap or an array.
+
+```cshrp
+using System.Collections.Generic;
+
+public class Solution {
+    private Dictionary<int, int> memo = new Dictionary<int, int>();
+    
+    private int Dp(int i) {
+        if (i <= 2) return i;
+        
+        // Check if value is already computed
+        if (!memo.ContainsKey(i)) {
+            memo[i] = Dp(i - 1) + Dp(i - 2);
+        }
+
+        return memo[i];
+    }
+
+    public int ClimbStairs(int n) {
+        return Dp(n);
+    }
+}
+```
+With memoization, our time complexity drops to O(n) - astronomically better, literally.
+
+You may notice that a hashmap is overkill for caching here, and an array can be used instead. This is true, but using a hashmap isn't necessarily bad practice as some DP problems will require one, and they're hassle-free to use as you don't need to worry about sizing an array correctly. Furthermore, when using top-down DP, some problems do not require us to solve every single subproblem, in which case an array may use more memory than a hashmap.
+
+We just talked a whole lot about top-down, but what about bottom-up? Everything is pretty much the same, except we will start from our base cases and iterate up to our final answer. As stated before, bottom-up implementations usually use an array, so we will use an array dp where dp[i] represents the number of ways to climb to the i th step.
+
+```cshrp
+public class Solution {
+    public int ClimbStairs(int n) {
+        if (n == 1) return 1;
+
+        // Array to hold the results of subproblems
+        int[] dp = new int[n + 1];
+        dp[1] = 1; // Base case
+        dp[2] = 2; // Base case
+
+        for (int i = 3; i <= n; i++) {
+            dp[i] = dp[i - 1] + dp[i - 2]; // Recurrence rela
+```
+Notice that the implementation still follows the framework exactly - the framework holds for both top-down and bottom-up implementations.
+
+
+To Summarize
+With DP problems, we can use logical thinking to find the answer to the original problem for certain inputs, in this case we reason that there is 1 way to climb to the first stair and 2 ways to climb to the second stair. We can then use a recurrence relation to find the answer to the original problem for any state, in this case for any stair number. Finding the recurrence relation involves thinking about how moving from one state to another changes the answer to the problem.
+
+### Example 198. House Robber
+
+This is the first of 6 articles where we will use a framework to work through example DP problems. The framework provides a blueprint to solve DP problems, but when you are just starting to learn DP, deriving some of the logic yourself may be difficult. The objective of these articles is to talk through how to use the framework to work through each problem, and our goal is that, by the end of this, you will be able to independently tackle most DP problems using this framework.
+
+In this article, we will be looking at the House Robber problem. In an earlier section of this explore card, we talked about how House Robber fits the characteristics of a DP problem. It's asking for the maximum of something, and our current decisions will affect which options are available for our future decisions. Let's see how we can use the framework to develop an algorithm for this problem.
+
+1. A function or array that answers the problem for a given state
+
+First, we need to decide on state variables. As a reminder, state variables should be fully capable of describing a scenario. Imagine if you had this scenario in real life - you're a robber and you have a lineup of houses. If you are at one of the houses, the only variable you would need to describe your situation is an integer - the index of the house you are currently at. Therefore, the only state variable is an integer, say i, that indicates the index of a house.
+
+If the problem had an added constraint such as "you are only allowed to rob up to k houses", then k would be another necessary state variable. This is because being at, say house 4 with 3 robberies left is different than being at house 4 with 5 robberies left.
+
+You may be wondering - why don't we include a state variable that is a boolean indicating if we robbed the previous house or not? We certainly could include this state variable, but we can develop our recurrence relation in a way that makes it unnecessary. Building an intuition for this is difficult at first, but it becomes easier with practice.
+
+The problem is asking for "the maximum amount of money you can rob". Therefore, we would use either a function dp(i) that returns the maximum amount of money you can rob up to and including house i, or an array dp where dp[i] represents the maximum amount of money you can rob up to and including house i.
+
+This means that after all the subproblems have been solved, dp[i] and dp(i) both return the answer to the original problem for the subarray of nums that spans 0 to i inclusive. To solve the original problem, we will just need to return dp[nums.length - 1] or dp(nums.length - 1), depending if we do bottom-up or top-down.
+
+2. A recurrence relation to transition between states
+
+For this part, let's assume we are using a top-down (recursive function) approach. Note that the top-down approach is closer to our natural way of thinking and it is generally easier to think of the recurrence relation if we start with a top-down approach.
+
+Next, we need to find a recurrence relation, which is typically the hardest part of the problem. For any recurrence relation, a good place to start is to think about a general state (in this case, let's say we're at the house at index i), and use information from the problem description to think about how other states relate to the current one.
+
+If we are at some house, logically, we have 2 options: we can choose to rob this house, or we can choose to not rob this house.
+
+If we decide not to rob the house, then we don't gain any money. Whatever money we had from the previous house is how much money we will have at this house - which is dp(i - 1).
+If we decide to rob the house, then we gain nums[i] money. However, this is only possible if we did not rob the previous house. 
+This means the money we had when arriving at this house is the money we had from the previous house without robbing it, which would be however much money we had 2 houses ago, dp(i - 2). 
+After robbing the current house, we will have dp(i - 2) + nums[i] money.
+From these two options, we always want to pick the one that gives us maximum profits. Putting it together, we have our recurrence relation: 
+dp(i)=max(dp(i - 1),
+dp(i - 2) + nums[i]) .
+
+3. Base cases
+
+The last thing we need is base cases so that our recurrence relation knows when to stop. The base cases are often found from clues in the problem description or found using logical thinking. In this problem, if there is only one house, then the most money we can make is by robbing the house (the alternative is to not rob the house). If there are only two houses, then the most money we can make is by robbing the house with more money (since we have to choose between them). Therefore, our base cases are:
+
+dp(0) = nums[0]
+dp(1)=max(nums[0], nums[1])
+
+### Top-down Implementation
+
+Now that we have established all 3 parts of the framework, let's put it together for the final result. Remember: we need to memoize the function!
+
+```cshrp
+public class Solution {
+    private Dictionary<int, int> memo = new Dictionary<int, int>();
+    private int[] nums;
+
+    private int Dp(int i) {
+        // Base cases
+        if (i == 0) return nums[0];
+        if (i == 1) return Math.Max(nums[0], nums[1]);
+
+        if (!memo.ContainsKey(i)) {
+            memo[i] = Math.Max(Dp(i - 1), Dp(i - 2) + nums[i]);
+        }
+        return memo[i];
+    }
+
+    public int Rob(int[] nums) {
+        this.nums = nums;
+        if (nums.Length == 0) return 0;
+        if (nums.Length == 1) return nums[0];
+        return Dp(nums.Length - 1);
+    }
+}
+```
+
+### Bottom-up Implementation
+
+Here's the bottom-up approach: everything is the same, except that we use an array instead of a hash map and we iterate using a for-loop instead of using recursion.
+
+```cshrp
+public class Solution {
+    public int Rob(int[] nums) {
+        if (nums.Length == 0) return 0;
+        if (nums.Length == 1) return nums[0];
+
+        int[] dp = new int[nums.Length];
+
+        // Base cases
+        dp[0] = nums[0];
+        dp[1] = Math.Max(nums[0], nums[1]);
+
+        for (int i = 2; i < nums.Length; i++) {
+            dp[i] = Math.Max(dp[i - 1], dp[i - 2] + nums[i]); // Recurrence relation
+        }
+
+        return dp[nums.Length - 1];
+    }
+}
+```
+
+For both implementations, the time and space complexity is O(n). We'll talk about time and space complexity of DP algorithms in depth at the end of this chapter. Here's an animation that shows the algorithm in action:
+
+## Multidimensional DP
+
+The dimensions of a DP algorithm refer to the number of state variables used to define each state. So far in this explore card, all the algorithms we have looked at required only one state variable - therefore they are one-dimensional. In this section, we're going to talk about problems that require multiple dimensions.
+
+Typically, the more dimensions a DP problem has, the more difficult it is to solve. Two-dimensional problems are common, and sometimes a problem might even require five dimensions. The good news is, the framework works regardless of the number of dimensions.
+
+The following are common things to look out for in DP problems that require a state variable:
+
+- An index along some input. This is usually used if an input is given as an array or string. This has been the sole state variable for all the problems that we've looked at so far, and it has represented the answer to the problem if the input was considered only up to 
+that index - for example, if the input is nums = [0, 1, 2, 3, 4, 5, 6], then dp(4) would represent the answer to the problem for the input nums = [0, 1, 2, 3, 4].
+- A second index along some input. Sometimes, you need two index state variables, say i and j. In some questions, these variables represent the answer to the original problem if you considered the input starting at index i and ending at index j. Using the same example above, dp(1, 3) would solve the problem for the input nums = [1, 2, 3], if the original input was [0, 1, 2, 3, 4, 5, 6].
+- Explicit numerical constraints given in the problem. For example, "you are only allowed to complete k transactions", or "you are allowed to break up to k obstacles", etc.
+- Variables that describe statuses in a given state. For example "true if currently holding a key, false if not", "currently holding k packages" etc.
+- Some sort of data like a tuple or bitmask used to indicate things being "visited" or "used". For example, "bitmask is a mask where the ith bit indicates if the i th city has been visited". Note that mutable data structures like arrays cannot be used - typically, only immutable data structures like numbers and strings can be hashed, and therefore memoized.
+Multi-dimensional problems make us think harder about deciding what our function or array will represent, as well as what the recurrence relation should look like. In the next article, we'll walk through another example using the framework with a 2D DP problem.
+
