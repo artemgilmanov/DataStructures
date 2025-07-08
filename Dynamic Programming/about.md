@@ -338,3 +338,140 @@ that index - for example, if the input is nums = [0, 1, 2, 3, 4, 5, 6], then dp(
 - Some sort of data like a tuple or bitmask used to indicate things being "visited" or "used". For example, "bitmask is a mask where the ith bit indicates if the i th city has been visited". Note that mutable data structures like arrays cannot be used - typically, only immutable data structures like numbers and strings can be hashed, and therefore memoized.
 Multi-dimensional problems make us think harder about deciding what our function or array will represent, as well as what the recurrence relation should look like. In the next article, we'll walk through another example using the framework with a 2D DP problem.
 
+## Top-down to Bottom-up
+
+As we've said in the previous chapter, usually a top-down algorithm is easier to implement than the equivalent bottom-up algorithm. With that being said, it is useful to know how to take a completed top-down algorithm and convert it to bottom-up. There's a number of reasons for this: first, in an interview, if you solve a problem with top-down, you may be asked to rewrite your solution in an iterative manner (using bottom-up) instead. Second, as we mentioned before, bottom-up usually is more efficient than top-down in terms of runtime.
+
+Steps to convert top-down into bottom-up
+
+Start with a completed top-down implementation.
+
+Initialize an array dp that is sized according to your state variables. For example, let's say the input to the problem was an array nums and an integer k that represents the maximum number of actions allowed. Your array dp would be 2D with one dimension of length nums.length and the other of length k. The values should be initialized as some default value opposite of what the problem is asking for. For example, if the problem is asking for the maximum of something, set the values to negative infinity. If it is asking for the minimum of something, set the values to infinity.
+
+Set your base cases, same as the ones you are using in your top-down function. Recall in House Robber, dp(0) = nums[0] and dp(1) = max(nums[0], nums[1]). In bottom-up, dp[0] = nums[0] and dp[1] = max(nums[0], nums[1]).
+
+Write a for-loop(s) that iterate over your state variables. If you have multiple state variables, you will need nested for-loops. These loops should start iterating from the base cases.
+
+Now, each iteration of the inner-most loop represents a given state, and is equivalent to a function call to the same state in top-down. Copy the logic from your function into the for-loop and change the function calls to accessing your array. All dp(...) changes into dp[...].
+
+We're done! dp is now an array populated with the answer to the original problem for all possible states. Return the answer to the original problem, by changing return dp(...) to return dp[...].
+
+Let's try a quick example using the House Robber code from before. Here's a completed top-down solution:
+
+```cshrp
+public class Solution {
+    private Dictionary<int, int> memo = new Dictionary<int, int>();
+    private int[] nums;
+
+    private int Dp(int i) {
+        // Base cases
+        if (i == 0) return nums[0];
+        if (i == 1) return Math.Max(nums[0], nums[1]);
+
+        if (!memo.ContainsKey(i)) {
+            memo[i] = Math.Max(Dp(i - 1), Dp(i - 2) + nums[i]);
+        }
+        return memo[i];
+    }
+
+    public int Rob(int[] nums) {
+        this.nums = nums;
+        if (nums.Length == 0) return 0;
+        if (nums.Length == 1) return nums[0];
+        return Dp(nums.Length - 1);
+    }
+}
+```
+First, we initialize an array dp sized according to our state variables. Our only state variable is i which can take n values.
+```cshrp
+public class Solution {
+    public int Rob(int[] nums) {
+        if (nums.Length == 0) return 0;
+        if (nums.Length == 1) return nums[0];
+
+        int[] dp = new int[nums.Length];
+        dp[0] = nums[0];
+        dp[1] = Math.Max(nums[0], nums[1]);
+
+        for (int i = 2; i < nums.Length; i++) {
+            dp[i] = Math.Max(dp[i - 1], dp[i - 2] + nums[i]);
+        }
+
+        return dp[nums.Length - 1];
+    }
+}
+```
+Second, we should set our base cases. 
+dp[0] = nums[0] and dp[1] = max(nums[0], nums[1]). To avoid index out of bounds, we should also just return nums[0] if theres only one house.
+
+```cshrp
+public class Solution {
+    public int Rob(int[] nums) {
+        if (nums.Length == 0) return 0;
+        if (nums.Length == 1) return nums[0];
+
+        int[] dp = new int[nums.Length];
+        dp[0] = nums[0];
+        dp[1] = Math.Max(nums[0], nums[1]);
+
+        for (int i = 2; i < nums.Length; i++) {
+            dp[i] = Math.Max(dp[i - 1], dp[i - 2] + nums[i]);
+        }
+
+        return dp[nums.Length - 1];
+    }
+}
+```
+Next, write a for-loop to iterate over the state variables, starting from the base cases.
+
+```cshrp
+class Solution {
+    public int rob(int[] nums) {
+        if (nums.length == 1) return nums[0];
+        
+        int[] dp = new int[nums.length];
+        
+        // Base cases
+        dp[0] = nums[0];
+        dp[1] = Math.max(nums[0], nums[1]);
+        
+        for (int i = 2; i < nums.length; i++) {
+            dp[i] = Math.max(dp[i - 1], dp[i - 2] + nums[i]);
+        }
+
+        return dp[nums.length - 1];
+    }
+}
+```
+Lastly, copy the recurrence relation over from the top-down solution and put it in the for-loop. Return 
+```cshrp
+public class Solution {
+    public int Rob(int[] nums) {
+        if (nums.Length == 1) return nums[0];
+        
+        int[] dp = new int[nums.Length];
+        
+        // Base cases
+        dp[0] = nums[0];
+        dp[1] = Math.Max(nums[0], nums[1]);
+        
+        for (int i = 2; i < nums.Length; i++) {
+            dp[i] = Math.Max(dp[i - 1], dp[i - 2] + nums[i]); // Recurrence relation
+        }
+        
+        return dp[nums.Length - 1];
+    }
+}
+```
+### Time and Space Complexity
+
+Finding the time and space complexity of a dynamic programming algorithm may sound like a daunting task. However, this task is usually not as difficult as it sounds. Furthermore, justifying the time and space complexity in an explanation is relatively simple as well. One of the main points with DP is that we never repeat calculations, whether by tabulation or memoization, we only compute a state once. Because of this, the time complexity of a DP algorithm is directly tied to the number of possible states.
+
+If computing each state requires F time, and there are n possible states, then the time complexity of a DP algorithm is O(n⋅F). With all the problems we have looked at so far, computing a state has just been using a recurrence relation equation, which is O(1). Therefore, the time complexity has just been equal to the number of states. To find the number of states, look at each of your state variables, compute the number of values each one can represent, and then multiply all these numbers together.
+
+Let's say we had 3 state variables: 
+i, k, and holding for some made up problem. i is an integer used to keep track of an index for an input array nums, k is an integer given in the input which represents the maximum actions we can do, and holding is a boolean variable. What will the time complexity be for a DP algorithm that solves this problem? Let n = nums.length and K be the maximum actions possible given in the input. i can be from 0 to nums.length, k can be from 0 to K, and holding can be true or false. Therefore, there are n⋅K⋅2 states. If computing each state is O(1), then the time complexity will be O(n⋅K⋅2)=O(n⋅K).
+
+Whenever we compute a state, we also store it so that we can refer to it in the future. In bottom-up, we tabulate the results, and in top-down, states are memoized. Since we store states, the space complexity is equal to the number of states. That means that in problems where calculating a state is O(1), the time and space complexity are the same. In many DP problems, there are optimizations that can improve both complexities - we'll talk about this later.
+
+## Iteration in the recurrence relation
