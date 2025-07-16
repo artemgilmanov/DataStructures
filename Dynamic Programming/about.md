@@ -794,3 +794,96 @@ dp(i, transactionsRemaining, holding) = max(doNothing, sellStock) if holding == 
 Where, doNothing = dp(i + 1, transactionsRemaining, holding), sellStock = prices[i] + dp(i + 1, transactionsRemaining - 1, 0), and buyStock = -prices[i] + dp(i + 1, transactionsRemaining, 1).
 
 3. Base cases
+
+Both base cases are very simple for this problem. If we are out of transactions (transactionsRemaining = 0), then we should immediately return 0 as we cannot make any more money. If the stock is no longer on the market (i = prices.length), then we should also return 0, as we cannot make any more money.
+
+### Top-down Implementation
+
+```cshrp
+public class Solution {
+    private int[] prices;
+    private int[,,] memo;
+
+    private int Dp(int i, int transactionsRemaining, int holding) {
+        // Base cases
+        if (transactionsRemaining == 0 || i == prices.Length) {
+            return 0;
+        }
+
+        if (memo[i, transactionsRemaining, holding] == int.MinValue) {
+            int doNothing = Dp(i + 1, transactionsRemaining, holding);
+            int doSomething;
+
+            if (holding == 1) {
+                // Sell stock
+                doSomething = prices[i] + Dp(i + 1, transactionsRemaining - 1, 0);
+            } else {
+                // Buy stock
+                doSomething = -prices[i] + Dp(i + 1, transactionsRemaining, 1);
+            }
+
+            // Recurrence relation: maximize profit
+            memo[i, transactionsRemaining, holding] = Math.Max(doNothing, doSomething);
+        }
+
+        return memo[i, transactionsRemaining, holding];
+    }
+
+    public int MaxProfit(int k, int[] prices) {
+        this.prices = prices;
+        int n = prices.Length;
+
+        // Initialize memo array with a sentinel value
+        memo = new int[n, k + 1, 2];
+        for (int i = 0; i < n; i++) {
+            for (int t = 0; t <= k; t++) {
+                memo[i, t, 0] = int.MinValue;
+                memo[i, t, 1] = int.MinValue;
+            }
+        }
+
+        return Dp(0, k, 0);
+    }
+}
+```
+
+### Bottom-up Implementation
+
+Again, the recurrence relation is the same with top-down, but we need to be careful about how we configure our for loops. The base cases are automatically handled because the 
+dp array is initialized with all values set to 0. For iteration direction and order, remember with bottom-up we start at the base cases. Therefore we will start iterating from the end of the input and with only 1 transaction remaining.
+
+```cshrp
+public class Solution {
+    public int MaxProfit(int k, int[] prices) {
+        int n = prices.Length;
+        int[,,] dp = new int[n + 1, k + 1, 2];
+
+        for (int i = n - 1; i >= 0; i--) {
+            for (int transactionsRemaining = 1; transactionsRemaining <= k; transactionsRemaining++) {
+                for (int holding = 0; holding < 2; holding++) {
+                    int doNothing = dp[i + 1, transactionsRemaining, holding];
+                    int doSomething;
+
+                    if (holding == 1) {
+                        // Sell stock
+                        doSomething = prices[i] + dp[i + 1, transactionsRemaining - 1, 0];
+                    } else {
+                        // Buy stock
+                        doSomething = -prices[i] + dp[i + 1, transactionsRemaining, 1];
+                    }
+
+                    // Recurrence relation
+                    dp[i, transactionsRemaining, holding] = Math.Max(doNothing, doSomething);
+                }
+            }
+        }
+
+        return dp[0, k, 0];
+    }
+}
+```
+
+The time and space complexity of this problem for both implementations is the number of states since the recurrence relation is just a constant time formula. If n = prices.length, then this means the time and space complexity is O(n⋅k⋅2)=O(n⋅k).
+
+## State Reduction
+
