@@ -887,3 +887,138 @@ The time and space complexity of this problem for both implementations is the nu
 
 ## State Reduction
 
+In an earlier chapter when we used the framework to solve Maximum Score from Performing Multiplication Operations, we mentioned that we could use 2 state variables instead of 3 because we could derive the information the 3rd one would have given us from the other 2. By doing this, we greatly reduced the number of states (as we learned earlier, the number of states is the product of the number of values each state variable can take). In most cases, reducing the number of states will reduce the time and space complexity of the algorithm.
+
+This is called state reduction, and it is applicable for many DP problems, including a few that we have already looked at. State reduction usually comes from a clever trick or observation. Sometimes, as is in the case of Maximum Score from Performing Multiplication Operations, state reduction can result in lower time and space complexity. Other times, only the space complexity will be improved while the time complexity remains the same.
+
+State reduction can also be achieved in the recurrence relation. Recall when we looked at House Robber. Only one state variable was used, i, which indicates what house we are currently at. An alternative way to solve the problem would be adding an extra boolean state variable prev that indicates if we robbed the previous house or not, and that would look something like this:
+
+```cshrp
+public class Solution {
+    private int[] nums;
+    private Dictionary<(int, bool), int> memo = new();
+
+    private int Dp(int i, bool prevRobbed) {
+        if (i < 0) return 0;
+
+        var key = (i, prevRobbed);
+        if (memo.ContainsKey(key)) return memo[key];
+
+        int result = Dp(i - 1, false);
+        if (!prevRobbed) {
+            result = Math.Max(result, Dp(i - 1, true) + nums[i]);
+        }
+
+        memo[key] = result;
+        return result;
+    }
+
+    public int Rob(int[] nums) {
+        this.nums = nums;
+        return Dp(nums.Length - 1, false);
+    }
+}
+```
+
+However, we mentioned in the House Robber article: "We certainly could include this state variable, but we can develop our recurrence relation in a way that makes it unnecessary.". By using a clever recurrence relation and base case, we avoided the need for the extra state variable which reduces the number of states by a factor of 2.
+
+Note: state reductions for space complexity usually only apply to bottom-up implementations, while improving time complexity by reducing the number of state variables applies to both implementations.
+
+When it comes to reducing state variables, it's hard to give any general advice or blueprint. The best advice is to try and think if any of the state variables are related to each other, and if an equation can be created among them. If a problem does not require iteration, there is usually some form of state reduction possible.
+
+Another common scenario where we can improve space complexity is when the recurrence relation is static (no iteration) along one dimension. Let's look back at where we started - Fibonacci. Recall that the ith Fibonacci number can be calculated with the recurrence relation: F(i)=F(i−1)+F(i−2)
+Because this recurrence relation is static, to calculate the ith Fibonacci number, we only ever care about the previous two numbers. That means if we are using a bottom-up approach to find the nth Fibonacci number and start from the base cases, we don't actually need to use an array and remember every single Fibonacci number.
+
+Let's say we wanted F(100). Starting from the base cases, we need to calculate every Fibonacci number from F(2) to F(99), but at the time of the actual calculation for F(100), we only care about F(98) and F(99). The other 90+ Fibonacci numbers aren't needed, so storing all of them is a waste of space.
+
+Using only two variables instead, we can improve space complexity to O(1) from O(n) using an array. The time complexity remains the same.
+
+```csharp
+public class Solution {
+    public int Fib(int n) {
+        if (n <= 1) return n;
+
+        int oneBack = 1;
+        int twoBack = 0;
+
+        for (int i = 2; i <= n; i++) {
+            int temp = oneBack;
+            oneBack += twoBack;
+            twoBack = temp;
+        }
+
+        return oneBack;
+    }
+}
+```
+
+Whenever you notice that values calculated by a DP algorithm are only reused a few times and then never used again, try to see if you can save on space by replacing an array with some variables. A good first step for this is to look at the recurrence relation to see what previous states are used. For example, in Fibonacci, we only refer to the previous two states, so all results before n - 2 can be discarded.
+
+## Counting DP
+
+Most of the problems we have looked at in earlier chapters ask for either the maximum, minimum, or longest of something. However, it is also very common for a DP problem to ask for the number of distinct ways to do something. In fact, one of the first examples we looked at did this - recall that Climbing Stairs asked us to find the number of ways to climb to the top of the stairs.
+
+Another term used to describe this class of problems is "counting DP".
+
+What are the differences with counting DP? With the maximum/minimum problems, the recurrence relation typically involves a max() or min() function. This is true for all types of problems we have looked at - iteration, multi-dimensional, etc. With counting DP, the recurrence relation typically just sums the results of multiple states together. For example, in Climbing Stairs, the recurrence relation was dp(i) = dp(i - 1) + dp(i - 2). There is no max() or min(), just addition.
+
+Another difference is in the base cases. In most of the problems we have looked at, if the state goes out of bounds, the base case equals 0. For example, in the Best Time to Buy and Sell Stock questions, when we ran out of transactions or ran out of days to trade, we returned 0 because we can't make any more profit. In Longest Common Subsequence, when we run out of characters for either string, we return 0 because the longest common subsequence of any string and an empty string is 0. With counting DP, the base cases are often not set to 0. This is because the recurrence relation usually only involves addition terms with other states, so if the base case was set to 0 then you would only ever add 0 to itself. Finding these base cases involves some logical thinking - for example, when we looked at Climbing Stairs - we reasoned that there is 1 way to climb to the first step and 2 ways to climb to the second step.
+
+These next 3 problems are very good practice problems that ask for the number of distinct ways to do something. Try them on your own, but if you get stuck, come back here for hints:
+
+276. Paint Fence
+Click here to show hint regarding state variables and dp
+Let dp(i) represent the number of ways to paint i posts.
+
+Click here to show hint regarding recurrence relation
+At each new fence post, we can either paint it the same color as the previous post, or a different color. If we choose a different color, then there are k - 1 colors to choose from. If we choose the same color, we need to make sure that the post at i - 1 and i - 2 are not the same color.
+
+Click here to show hint regarding base cases
+There are k ways to paint one fence post. Since we are allowed to paint 2 consecutive fence posts the same color, there are k⋅k ways to paint two fence posts.
+
+518. Coin Change 2
+Click here to show hint regarding state variables and dp
+Let dp[i] represent the number of ways to make i money.
+
+Click here to show hint regarding recurrence relation
+For each coin, for each amount of money i, you can make i money by adding the coin to i - coin money. Make sure to stay in bounds.
+
+Click here to show hint regarding base cases
+Since our recurrence relation only involves addition with other states, we need dp[0] to be a nonzero value, otherwise we will only ever be adding 0 to itself.
+
+91. Decode Ways
+Click here to show hint regarding state variables and dp
+Let dp(i) return the number of ways the string starting from index i can be decoded. Return dp(0).
+
+Click here to show hint regarding recurrence relation
+You can always treat the current number as a one digit number. In addition, if the current number and next number combined is between 10 and 26, you have an additional option.
+
+Click here to show hint regarding base cases
+If s[i] ==  "0", then there is no way for this string to ever be decoded to anything. If i goes out of bounds, we need to return a nonzero value.
+
+## Kadane's Algorithm
+
+Kadane's Algorithm is an algorithm that can find the maximum sum subarray given an array of numbers in O(n) time and O(1) space. Its implementation is a very simple example of dynamic programming, and the efficiency of the algorithm allows it to be a powerful tool in some DP algorithms. If you haven't already solved Maximum Subarray, take a quick look at the problem before continuing with this article - Kadane's Algorithm specifically solves this problem.
+
+Kadane's Algorithm involves iterating through the array using an integer variable 
+current, and at each index i, determines if elements before index i are "worth" keeping, or if they should be "discarded". The algorithm is only useful when the array can contain negative numbers. If current becomes negative, it is reset, and we start considering a new subarray starting at the current index.
+
+Pseudocode for the algorithm is below:
+
+```cshrp
+// Given an input array of numbers "nums",
+1. best = negative infinity
+2. current = 0
+3. for num in nums:
+    3.1. current = Max(current + num, num)
+    3.2. best = Max(best, current)
+
+4. return best
+```
+
+Line 3.1 of the pseudocode is where the magic happens. If current has become less than 0 from including too many or too large negative numbers, the algorithm "throws it away" and resets.
+
+While usage of Kadane's Algorithm is a niche, variations of Kadane's Algorithm can be used to develop extremely efficient DP algorithms. Try the next two practice problems with this in mind. No framework hints are provided here as implementations of Kadane's Algorithm do not typically follow the framework intuitively, although they are still technically dynamic programming (Kadane's Algorithm utilizes optimal sub-structures - it keeps the maximum subarray ending at the previous position in current).
+
+## Pathing Problems
+
